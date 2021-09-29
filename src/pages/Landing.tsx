@@ -1,19 +1,34 @@
-import { Container, Heading, Flex, Center, Divider, VStack, Text, Box, SimpleGrid, Button } from '@chakra-ui/react';
+import { Container, Flex, Center, VStack, Text, Box, SimpleGrid } from '@chakra-ui/react';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Redirect } from 'react-router-dom';
+
 import {ReactComponent as LandingIllustration} from '../images/scrum_landing.svg';
+import LoginButton from '../components/LoginButton';
+import RegisterButton from '../components/RegisterButton';
+import AuthLoading from '../components/AuthLoading';
+import Header from '../components/Header';
 
-const Header = "DevBoards";
-const Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+// import Auth from './Auth';
 
-const Landing = () => (
+const description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+const Landing = () => {
+    /* Check Auth0 status, if authenticated move away from landing page */
+    const { isLoading, isAuthenticated } = useAuth0();
+    
+    if( isLoading ){
+        return (<AuthLoading/>);
+    }
+
+    if( isAuthenticated ){
+        /* Don't spend time rendering rest of page, just redirect */
+        return (<Redirect to="/auth"/>);
+    };
+
+    return (
         /* 10% off each side of page for 90% fluidity */
         <Container pt={24} maxW='' px='5%'>
-            {/* Align header to start of page */}
-            <Flex alignItems='start' >
-              <Heading fontWeight='light' size='4xl' >{ Header }</Heading>
-            </Flex>
-
-            {/* Header & description divider */}
-            <Divider my={3}/>
+            <Header/>
 
             {/* Align description and login/welcome container in grid to ensure responsiveness */}
             <SimpleGrid
@@ -25,12 +40,9 @@ const Landing = () => (
 
               { /* Create a vertical stack to align the page description and illustration below it */ }
               <VStack>
-                <Text color='gray.500' fontSize='xl'>{ Description }</Text>
-                <Center pt={2}>
-                    <LandingIllustration
-                        width='500px'
-                        height='auto'
-                    />
+                <Text color='gray.500' fontSize='xl'>{ description }</Text>
+                <Center pt={2} width="100%">
+                    <LandingIllustration width="700px"/>
                 </Center>
               </VStack>
 
@@ -54,13 +66,14 @@ const Landing = () => (
                       <Text fontSize='5xl'>
                           Welcome!
                       </Text>
-                      <Button colorScheme="black" variant="outline" width="50%">Log in</Button>
-                      <Button colorScheme="black" variant="outline" width="50%">Register</Button>
+                      <LoginButton/>
+                      <RegisterButton/>
                     </VStack>
                   </Flex>
               </Box>
             </SimpleGrid>
         </Container>
     );
+}
 
 export default Landing;
