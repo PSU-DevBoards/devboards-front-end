@@ -1,24 +1,22 @@
+import { Auth0Provider } from '@auth0/auth0-react';
 import { ChakraProvider } from '@chakra-ui/react';
-import { Auth0Provider } from "@auth0/auth0-react";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import config from './config';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-
-
-const domain = process.env.REACT_APP_AUTH0_DOMAIN as string;
-const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID as string;
 
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider>
       <Auth0Provider
-        domain={domain}
-        clientId={clientId}
+        domain={config.AUTH0_DOMAIN!}
+        clientId={config.AUTH0_CLIENT_ID!}
         redirectUri={window.location.origin}
-        audience="https://devboards/api"
-        useRefreshTokens>
+        audience={config.AUTH0_API_AUDIENCE!}
+        useRefreshTokens
+      >
         <App />
       </Auth0Provider>
     </ChakraProvider>
