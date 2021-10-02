@@ -1,7 +1,7 @@
-import React from 'react';
 import { VStack, Flex, CircularProgress, Heading, Text } from '@chakra-ui/react';
 import Header from './Header';
 
+/* Page for transitions while Auth0 is loading */
 const AuthLoading = () => (
     <Flex pt={24} maxW='' px='5%' height="100vh" flexDirection="column" >
         <Header/>
