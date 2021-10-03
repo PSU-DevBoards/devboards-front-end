@@ -4,11 +4,11 @@ import Landing from './pages/Landing';
 
 function App() {
   return (
-      <div className="App">
-        <Router>
-          <Route path="/" component={Landing} exact/>
-        </Router>
-      </div>
+    <div className="App" data-testid="app_container">
+      <Router>
+        <Route path="/" component={Landing} exact />
+      </Router>
+    </div>
   );
 }
 
