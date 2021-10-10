@@ -1,4 +1,4 @@
-import { VStack, Flex, CircularProgress, Heading, Text } from '@chakra-ui/react';
+import { Flex, CircularProgress, Heading, Text } from '@chakra-ui/react';
 import Header from './Header';
 
 /* Page for transitions while Auth0 is loading */
@@ -7,11 +7,11 @@ const AuthLoading = () => (
         <Header/>
         <Flex flex={1} justifyContent="center" alignItems="center">
             <Flex boxShadow='xl' rounded='md' bg='white' padding="25px">
-                <CircularProgress isIndeterminate color="black" size="20" marginRight="65px" marginBottom="10px" marginTop="10px" />
-                <VStack>
-                    <Heading fontWeight='medium' size='2xl' >Hang on tight!</Heading>
+                <CircularProgress isIndeterminate color="black" size="20" marginRight="50px" marginBottom="10px" marginTop="10px" />
+                <Flex alignSelf="center" flexFlow="column">
+                    <Heading fontWeight='medium' size='2xl' marginBottom='5px'>Hang on tight!</Heading>
                     <Text fontWeight='light' size='2xl'>You&apos;re being redirected...</Text>
-                </VStack>
+                </Flex>
             </Flex>
         </Flex>
     </Flex>

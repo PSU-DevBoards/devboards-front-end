@@ -1,26 +1,25 @@
 import { Container, Flex, Center, VStack, Text, Box, SimpleGrid } from '@chakra-ui/react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Redirect } from 'react-router-dom';
-
+import LoadingBar from 'react-top-loading-bar'
 import {ReactComponent as LandingIllustration} from '../images/scrum_landing.svg';
 import LoginButton from '../components/LoginButton';
 import RegisterButton from '../components/RegisterButton';
-import AuthLoading from '../components/AuthLoading';
 import Header from '../components/Header';
 
 const description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
 const Landing = () => {
     /* Check Auth0 status, if authenticated move away from landing page */
-    const { isLoading, isAuthenticated } = useAuth0();
-    
-    if( isLoading ){
-        return (<AuthLoading/>);
-    }
+    const { isLoading } = useAuth0();
 
-    if( isAuthenticated ){
-        /* Don't spend time rendering rest of page, just redirect */
-        return (<Redirect to="/auth"/>);
+    if( isLoading ){
+        return( 
+            <LoadingBar
+                color='#4A5568'
+                progress={90}
+                loaderSpeed={1000}
+            />
+        )
     }
 
     return (
