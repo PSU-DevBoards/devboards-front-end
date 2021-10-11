@@ -3,7 +3,8 @@ import { Container } from '@chakra-ui/react';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import Navbar from '../components/Navbar';
 
-type Organization = {id: number, owner: Array<string>}
+type Owner = {id: string, username:  string}
+type Organization = {id: number,name: string, owner: Array<Owner>}
 
 const Dashboard = () => {
     const { user, getAccessTokenSilently } = useAuth0();
@@ -23,7 +24,7 @@ const Dashboard = () => {
         /* Eventually replace endpoint with /users/me/organizations for org count */
         /* Getting CORS error here */
         const bearer = `Bearer ${resp}`;
-        fetch('http://localhost:8080/users/me/', {
+        fetch('http://localhost:8080/users/me/organizations', {
             headers: {
                 'Authorization': bearer,
             }
