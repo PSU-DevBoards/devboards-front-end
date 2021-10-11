@@ -15,7 +15,11 @@ function SiteRouter() {
             key={route.name}
             exact
             render={() =>
-              isAuthenticated ? route.component : <Redirect to="/" />
+              !isAuthenticated && route.authenticated ? (
+                <Redirect to="/" />
+              ) : (
+                route.component
+              )
             }
           />
         ))}
