@@ -6,14 +6,16 @@ const stub = {
     }),
 
   getCurrentUserOrganizations: () =>
-    Promise.resolve([{
-      id: 1,
-      name: 'testOrg',
-      owner: {
+    Promise.resolve([
+      {
         id: 1,
-        username: 'testUser'
+        name: 'testOrg',
+        owner: {
+          id: 1,
+          username: 'testUser',
+        },
       },
-    }]),
+    ]),
 };
 
 export default stub;
