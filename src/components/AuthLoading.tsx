@@ -15,6 +15,7 @@ const AuthLoading = () => (
             </Flex>
         </Flex>
     </Flex>
+  </Flex>
 );
 
 export default AuthLoading;
