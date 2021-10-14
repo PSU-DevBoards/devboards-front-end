@@ -1,8 +1,16 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import LoadingBar from 'react-top-loading-bar'
-import {ReactComponent as LandingIllustration} from '../images/scrum_landing.svg';
-import LoginButton from '../components/LoginButton';
-import RegisterButton from '../components/RegisterButton';
+import {
+  Box,
+  Center,
+  Container,
+  Flex,
+  SimpleGrid,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
+import { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import AuthLoading from '../components/AuthLoading';
 import Header from '../components/Header';
 import LoginButton from '../components/LoginButton';
 import RegisterButton from '../components/RegisterButton';
@@ -14,17 +22,19 @@ const description =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
 const Landing = () => {
-    /* Check Auth0 status, if authenticated move away from landing page */
-    const { isLoading } = useAuth0();
+  /* Check Auth0 status, if authenticated move away from landing page */
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const history = useHistory();
 
-    if( isLoading ){
-        return( 
-            <LoadingBar
-                color='#4A5568'
-                progress={90}
-                loaderSpeed={1000}
-            />
-        )
+  useEffect(() => {
+    if (isAuthenticated) {
+      getAccessTokenSilently({
+        audience: config.AUTH0_API_AUDIENCE,
+        scope: 'read:current_user',
+      }).then((token) => {
+        setAccessToken(token);
+        history.push('/dashboard');
+      });
     }
   }, [isAuthenticated]);
 
