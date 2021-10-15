@@ -8,10 +8,9 @@ class Service {
       headers: getAuthenticationHeader(),
     });
 
+    /* if response OK (HTTP 2XX) return result -- otherwise reject promise so exception is invoked */
     const json = await res.json();
-    json.status = res.status;
-
-    return json;
+    return res.ok ? json : json.then(Promise.reject.bind(Promise));
   }
 
   protected async post(endpoint: string, body: any) {
@@ -22,10 +21,9 @@ class Service {
       body: JSON.stringify(body),      
     })
 
+    /* if response OK (HTTP 2XX) return result -- otherwise reject promise so exception is invoked */
     const json = await res.json();
-    json.status = res.status;
-
-    return json;
+    return res.ok ? json : json.then(Promise.reject.bind(Promise));
   }
 }
 
