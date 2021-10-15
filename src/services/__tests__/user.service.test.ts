@@ -4,7 +4,7 @@ describe('userService', () => {
   it('gets the current user', async () => {
     const user = { id: 1, username: 'test' };
     global.fetch = jest.fn(() =>
-      Promise.resolve({ json: () => Promise.resolve(user) } as any)
+      Promise.resolve({ ok: true, json: () => Promise.resolve(user) } as any)
     );
 
     const currentUser = await userService.getCurrentUser();
@@ -19,9 +19,11 @@ describe('userService', () => {
   });
 
   it('gets the current user organizations', async () => {
-    const org = [{id: 1, name: 'testOrg', owner: { id: 1, username: 'test' }}];
+    const org = [
+      { id: 1, name: 'testOrg', owner: { id: 1, username: 'test' } },
+    ];
     global.fetch = jest.fn(() =>
-      Promise.resolve({ json: () => Promise.resolve(org) } as any)
+      Promise.resolve({ ok: true, json: () => Promise.resolve(org) } as any)
     );
 
     const currentUserOrgs = await userService.getCurrentUserOrganizations();
