@@ -5,17 +5,15 @@ import NoOrganization from '../components/NoOrganization';
 import userService, { UserOrganization } from '../services/user.service';
 
 function Dashboard() {
-  const [userInfo, setUserInfo] = useState<Array<UserOrganization>>();
+  const [organizations, setOrganizations] = useState<Array<UserOrganization>>();
 
   useEffect(() => {
-    userService
-      .getCurrentUserOrganizations()
-      .then((userOrg) => setUserInfo(userOrg));
+    userService.getCurrentUserOrganizations().then(setOrganizations);
   }, []);
 
-  if (userInfo?.length! <= 0) {
+  if (organizations?.length! <= 0) {
     return (
-      <Container maxW="" px="1%" pt="5px">
+      <Container maxW="" px="1%" pt="5px" data-testid="no_org_container">
         <Navbar />
         <NoOrganization />
       </Container>

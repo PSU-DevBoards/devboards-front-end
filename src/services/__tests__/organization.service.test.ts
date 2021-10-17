@@ -11,7 +11,7 @@ describe('organizationService', () => {
 
     expect(searchOrg).toEqual(org);
     expect(global.fetch).toBeCalledWith(
-      expect.any(String),
+      expect.stringContaining('/organizations/1'),
       expect.objectContaining({
         headers: { Authorization: expect.any(String) },
       })
@@ -19,18 +19,57 @@ describe('organizationService', () => {
   });
 
   it('gets organization user by id', async () => {
-    const orgRole = [{ organization_id: 1, user_id: 1, role_id: null }];
+    const organizationUsers = [
+      { organization_id: 1, user_id: 1, role_id: null },
+    ];
     global.fetch = jest.fn(() =>
-      Promise.resolve({ ok: true, json: () => Promise.resolve(orgRole) } as any)
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(organizationUsers),
+      } as any)
     );
 
-    const searchOrg = await organizationService.getOrganizationUsers(1);
+    const returnedOrganizationUsers =
+      await organizationService.getOrganizationUsers(1);
 
-    expect(searchOrg).toEqual(orgRole);
+    expect(returnedOrganizationUsers).toEqual(organizationUsers);
     expect(global.fetch).toBeCalledWith(
-      expect.any(String),
+      expect.stringContaining('/organizations/1/users'),
       expect.objectContaining({
         headers: { Authorization: expect.any(String) },
+      })
+    );
+  });
+
+  it('creates a post organization request', async () => {
+    const name = 'testOrg';
+    const organization = {
+      id: 0,
+      name,
+      owner: { id: 0, username: 'testUser' },
+    };
+
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(organization),
+      } as any)
+    );
+
+    const newOrganization = await organizationService.createOrganization(name);
+
+    expect(newOrganization).toEqual(organization);
+    expect(global.fetch).toBeCalledWith(
+      expect.stringContaining('/organizations'),
+      expect.objectContaining({
+        method: 'POST',
+        headers: {
+          Authorization: expect.any(String),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+        }),
       })
     );
   });

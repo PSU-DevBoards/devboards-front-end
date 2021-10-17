@@ -28,7 +28,8 @@ describe('authHelper', () => {
 
   test('attempts to get the token from local storage if not in memory', () => {
     setAccessToken(undefined as any);
-    getAccessToken();
+    global.Storage.prototype.getItem = jest.fn(() => 'test');
+    expect(getAccessToken()).toEqual('test');
     expect(global.Storage.prototype.getItem).toBeCalledTimes(1);
   });
 
