@@ -17,6 +17,15 @@ const stub = {
         role_id: null,
       },
     ]),
+  createOrganization: (name: string) =>
+    Promise.resolve({
+      id: 1,
+      name,
+      owner: {
+        id: 1,
+        username: 'testUser',
+      },
+    }),
 };
 
 export default stub;

@@ -10,41 +10,49 @@ const NoOrganization = () => {
   const history = useHistory();
   const [progress, setProgress] = useState(0);
   const toast = useToast();
-  const formik = useFormik({
+
+  /* --------------------------------- Methods -------------------------------- */
+  const onSubmitForm = (values: Record<string, string>) => {
+    let toastTitle = 'Organization created.';
+    let toastDescription = '';
+    let toastStatus = 'success';
+    setProgress(80);
+
+    OrganizationService.createOrganization(values.orgName)
+      .then((organization) => {
+        toastDescription = `We've successfully created "${organization.name}" for you.`;
+        /* Redirect */
+        history.push('/');
+      })
+      .catch(() => {
+        /* Request Failed */
+        toastTitle = 'Organization creation failed.';
+        toastDescription = `Error creating organization ${values.orgName}, try again later`;
+        toastStatus = 'error';
+      })
+      .finally(() => {
+        toast({
+          position: 'bottom-right',
+          title: toastTitle,
+          description: toastDescription,
+          status: toastStatus as any,
+          duration: 5000,
+          isClosable: false,
+        });
+
+        setProgress(100);
+      });
+  };
+
+  /* ---------------------------------- Hooks --------------------------------- */
+  const { handleSubmit, handleChange, values } = useFormik({
     initialValues: {
       orgName: '',
     },
-    onSubmit: (values) => {
-      let toastTitle = 'Organization created.';
-      let toastDescription = '';
-      let toastStatus = 'success';
-      setProgress(80);
-      OrganizationService.createOrganization(values.orgName)
-        .then((x) => {
-          toastDescription = `We've successfully created "${x.name}" for you.`;
-          /* Redirect */
-          history.push('/');
-        })
-        .catch(() => {
-          /* Request Failed */
-          toastTitle = 'Organization creation failed.';
-          toastDescription = `Error creating organization ${values.orgName}, try again later`;
-          toastStatus = 'error';
-        })
-        .finally(() => {
-          toast({
-            position: 'bottom-right',
-            title: toastTitle,
-            description: toastDescription,
-            status: toastStatus as any,
-            duration: 5000,
-            isClosable: false,
-          });
-          setProgress(100);
-        });
-    },
+    onSubmit: onSubmitForm,
   });
 
+  /* --------------------------------- Render --------------------------------- */
   return (
     <div>
       <LoadingBar
@@ -63,29 +71,13 @@ const NoOrganization = () => {
           px={10}
           width={{ sm: '90%', md: '80%', lg: '80%', xl: '50%' }}
         >
-          <Text
-            fontSize={{
-              base: '24px',
-              sm: '24px',
-              md: '30px',
-              lg: '40px',
-              xl: '44px',
-            }}
-          >
+          <Text fontSize={['24px', '24px', '30px', '40px', '44px']}>
             You do not currently own or belong to any organization.
           </Text>
-          <Text
-            fontSize={{
-              base: '14px',
-              sm: '14px',
-              md: '20px',
-              lg: '20px',
-              xl: '24px',
-            }}
-          >
+          <Text fontSize={['14px', '14px', '20px', '20px', '24px']}>
             Please create one below to begin using DevBoards.
           </Text>
-          <form onSubmit={formik.handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <Flex pt={5} justifyContent="center" alignItems="center">
               <Input
                 errorBorderColor="red.300"
@@ -95,8 +87,8 @@ const NoOrganization = () => {
                 w={['100%', '100%', '70%']}
                 id="orgName"
                 name="orgName"
-                onChange={formik.handleChange}
-                value={formik.values.orgName}
+                onChange={handleChange}
+                value={values.orgName}
               />
               <Button type="submit" w={['100%', '100%', '30%', '30%']}>
                 Create Organization
