@@ -1,4 +1,4 @@
-import './App.css';
+import './styles/App.css';
 import SiteRouter from './navigation/SiteRouter';
 
 function App() {
@@ -8,5 +8,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

@@ -1,18 +1,32 @@
+import { Container } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import userService from '../services/user.service';
+import Navbar from '../components/Navbar';
+import NoOrganization from '../components/NoOrganization';
+import userService, { UserOrganization } from '../services/user.service';
 
 function Dashboard() {
-  const [userInfo, setUserInfo] = useState('');
+  const [organizations, setOrganizations] = useState<Array<UserOrganization>>(
+    []
+  );
 
   useEffect(() => {
-    userService.getCurrentUser().then((user) => setUserInfo(user.username));
+    userService.getCurrentUserOrganizations().then(setOrganizations);
   }, []);
 
+  if (organizations?.length! <= 0) {
+    return (
+      <Container maxW="" px="1%" pt="5px" data-testid="no_org_container">
+        <Navbar />
+        <NoOrganization />
+      </Container>
+    );
+  }
+
   return (
-    <div>
+    <Container maxW="" px="1%" pt="5px">
+      <Navbar />
       <p>Welcome to the dashboard!</p>
-      <p>{userInfo}</p>
-    </div>
+    </Container>
   );
 }
 

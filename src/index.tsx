@@ -1,10 +1,11 @@
+/* istanbul ignore file */
 import { Auth0Provider } from '@auth0/auth0-react';
 import { ChakraProvider } from '@chakra-ui/react';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import config from './config';
-import './index.css';
+import './styles/index.css';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(

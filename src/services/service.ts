@@ -4,13 +4,28 @@ class Service {
   protected baseUrl: string = '';
 
   protected async get(endpoint: string) {
-    const res = await fetch(this.baseUrl + endpoint, {
+    const response = await fetch(this.baseUrl + endpoint, {
       headers: getAuthenticationHeader(),
     });
 
-    const json = await res.json();
+    /* if response OK (HTTP 2XX) return result -- otherwise reject promise so exception is invoked */
+    const json = response.json();
+    return response.ok ? json : json.then(Promise.reject.bind(Promise));
+  }
 
-    return json;
+  protected async post(endpoint: string, body: any) {
+    const response = await fetch(this.baseUrl + endpoint, {
+      headers: {
+        ...getAuthenticationHeader(),
+        ...{ 'Content-Type': 'application/json' },
+      },
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+
+    /* if response OK (HTTP 2XX) return result -- otherwise reject promise so exception is invoked */
+    const json = response.json();
+    return response.ok ? json : json.then(Promise.reject.bind(Promise));
   }
 }
 
