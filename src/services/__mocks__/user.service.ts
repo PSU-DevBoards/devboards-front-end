@@ -1,4 +1,4 @@
-const stub = {
+const UserService = {
   getCurrentUser: () =>
     Promise.resolve({
       id: 1,
@@ -18,4 +18,4 @@ const stub = {
     ]),
 };
 
-export default stub;
+export default UserService;

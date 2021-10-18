@@ -1,4 +1,4 @@
-const stub = {
+const OrganizationService = {
   getOrganizationById: () =>
     Promise.resolve({
       id: 1,
@@ -28,4 +28,4 @@ const stub = {
     }),
 };
 
-export default stub;
+export default OrganizationService;

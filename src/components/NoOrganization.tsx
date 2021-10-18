@@ -45,7 +45,11 @@ const NoOrganization = () => {
   };
 
   /* ---------------------------------- Hooks --------------------------------- */
-  const { handleSubmit, handleChange, values } = useFormik({
+  const {
+    handleSubmit,
+    handleChange,
+    values: { orgName },
+  } = useFormik({
     initialValues: {
       orgName: '',
     },
@@ -88,7 +92,7 @@ const NoOrganization = () => {
                 id="orgName"
                 name="orgName"
                 onChange={handleChange}
-                value={values.orgName}
+                value={orgName}
               />
               <Button type="submit" w={['100%', '100%', '30%', '30%']}>
                 Create Organization

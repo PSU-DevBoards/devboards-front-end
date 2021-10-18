@@ -5,7 +5,9 @@ import NoOrganization from '../components/NoOrganization';
 import userService, { UserOrganization } from '../services/user.service';
 
 function Dashboard() {
-  const [organizations, setOrganizations] = useState<Array<UserOrganization>>();
+  const [organizations, setOrganizations] = useState<Array<UserOrganization>>(
+    []
+  );
 
   useEffect(() => {
     userService.getCurrentUserOrganizations().then(setOrganizations);

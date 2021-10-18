@@ -7,8 +7,7 @@ const LoginButton = () => {
 
   return (
     <Button
-      colorScheme="black"
-      variant="outline"
+      colorScheme="purple"
       width="50%"
       onClick={() => loginWithRedirect()}
     >

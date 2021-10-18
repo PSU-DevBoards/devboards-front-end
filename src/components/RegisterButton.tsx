@@ -7,7 +7,7 @@ const RegisterButton = () => {
 
   return (
     <Button
-      colorScheme="black"
+      colorScheme="purple"
       variant="outline"
       width="50%"
       onClick={() => loginWithRedirect({ screen_hint: 'signup' })}
