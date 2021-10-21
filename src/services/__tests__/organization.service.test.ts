@@ -74,6 +74,41 @@ describe('organizationService', () => {
     );
   });
 
+  it('updates an organization by id', async () => {
+    const name = 'testOrg';
+    const organization = {
+      id: 0,
+      name,
+      owner: { id: 0, username: 'testUser' },
+    };
+
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(organization),
+      } as any)
+    );
+
+    const newOrganization = await organizationService.updateOrganization(1, {
+      name,
+    });
+
+    expect(newOrganization).toEqual(organization);
+    expect(global.fetch).toBeCalledWith(
+      expect.stringContaining('/organizations/1'),
+      expect.objectContaining({
+        method: 'PATCH',
+        headers: {
+          Authorization: expect.any(String),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+        }),
+      })
+    );
+  });
+
   afterEach(() => {
     (global.fetch as jest.Mock).mockRestore();
   });

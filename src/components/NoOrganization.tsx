@@ -58,13 +58,13 @@ const NoOrganization = () => {
 
   /* --------------------------------- Render --------------------------------- */
   return (
-    <div>
+    <>
       <LoadingBar
         color="#A0AEC0"
         progress={progress}
         onLoaderFinished={() => setProgress(0)}
       />
-      <Flex justifyContent="center" pt="10%">
+      <Flex justifyContent="center" pt="10%" data-testid="no_org_container">
         <Box
           boxShadow="xl"
           rounded="md"
@@ -101,7 +101,7 @@ const NoOrganization = () => {
           </form>
         </Box>
       </Flex>
-    </div>
+    </>
   );
 };
 
