@@ -24,7 +24,7 @@ function SiteRouter() {
                 ) : (
                   <OrganizationProvider>
                     <Container maxW="" px="1%" pt="5px">
-                      <Navbar />
+                      {isAuthenticated && <Navbar />}
                       {route.component}
                     </Container>
                   </OrganizationProvider>

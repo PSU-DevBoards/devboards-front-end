@@ -40,12 +40,10 @@ describe('NoOrganization', () => {
     const submit = screen.getByText('Create Organization');
     fireEvent.click(submit);
 
-    await waitFor(() => {
+    await waitFor(() =>
       expect(
         screen.getByText('Organization creation failed.')
-      ).toBeInTheDocument();
-    });
-
-    render(<NoOrganization />);
+      ).toBeInTheDocument()
+    );
   });
 });

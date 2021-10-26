@@ -59,14 +59,14 @@ const OrganizationForm = () => {
     });
 
   useEffect(() => {
-    setValues({ name: organization?.name || '' });
+    if (organization) setValues({ name: organization?.name });
   }, [organization]);
 
   return (
     <form onSubmit={handleSubmit}>
       <VStack>
         <SimpleGrid columns={[1, 2]} w="full">
-          <FormControl isInvalid={!!errors.name && touched.name}>
+          <FormControl isInvalid={!!errors.name && touched.name} isRequired>
             <FormLabel htmlFor="name">Organization Name</FormLabel>
             <Input
               onChange={handleChange}
@@ -109,7 +109,7 @@ const UsersTable = () => {
       </Thead>
       <Tbody>
         {orgUsers.map((orgUser) => (
-          <Tr>
+          <Tr key={orgUser.user_id}>
             <Td>{orgUser.organization_id}</Td>
             <Td>{orgUser.role_id}</Td>
             <Td isNumeric>{orgUser.user_id}</Td>

@@ -26,6 +26,7 @@ const OrganizationService = {
         username: 'testUser',
       },
     }),
+  deleteOrganization: () => Promise.resolve(''),
 };
 
 export default OrganizationService;

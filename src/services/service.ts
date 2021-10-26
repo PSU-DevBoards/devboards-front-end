@@ -42,6 +42,19 @@ class Service {
     const json = response.json();
     return response.ok ? json : json.then(Promise.reject.bind(Promise));
   }
+
+  protected async delete(endpoint: string) {
+    const response = await fetch(this.baseUrl + endpoint, {
+      headers: {
+        ...getAuthenticationHeader(),
+      },
+      method: 'DELETE',
+    });
+
+    /* if response OK (HTTP 2XX) return result -- otherwise reject promise so exception is invoked */
+    const text = response.text();
+    return response.ok ? text : text.then(Promise.reject.bind(Promise));
+  }
 }
 
 export default Service;

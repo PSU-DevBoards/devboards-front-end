@@ -1,5 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { Container, Flex, Text, VStack, Image } from '@chakra-ui/react';
+import { Container, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import AuthLoading from '../components/AuthLoading';
