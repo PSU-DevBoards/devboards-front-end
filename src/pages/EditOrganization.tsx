@@ -52,7 +52,7 @@ const OrganizationForm = () => {
         );
   };
 
-  const { handleSubmit, handleChange, errors, touched, values, setValues } =
+  const { handleSubmit, handleChange, handleBlur, errors, values, setValues } =
     useFormik({
       initialValues: { name: '' },
       onSubmit: onSubmitForm,
@@ -66,10 +66,11 @@ const OrganizationForm = () => {
     <form onSubmit={handleSubmit}>
       <VStack>
         <SimpleGrid columns={[1, 2]} w="full">
-          <FormControl isInvalid={!!errors.name && touched.name} isRequired>
+          <FormControl isInvalid={!!errors.name} isRequired>
             <FormLabel htmlFor="name">Organization Name</FormLabel>
             <Input
               onChange={handleChange}
+              onBlur={handleBlur}
               id="name"
               placeholder="name"
               value={values.name}

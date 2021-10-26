@@ -1,7 +1,9 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useParams } from 'react-router';
 import { useOrganization } from '../../contexts/organization-context';
-import OrganizationService from '../../services/organization.service';
+import OrganizationService, {
+  Organization,
+} from '../../services/organization.service';
 import EditOrganization from '../EditOrganization';
 
 jest.mock('../../contexts/organization-context');
@@ -15,6 +17,11 @@ const useOrganizationMock: jest.Mock = useOrganization as any;
 const useParamsMock: jest.Mock = useParams as any;
 
 describe('EditOrganization', () => {
+  let updateOrgSpy: jest.SpyInstance<
+    Promise<Organization>,
+    [id: number, values: Pick<Organization, 'name'>]
+  >;
+
   beforeEach(() => {
     useParamsMock.mockReturnValue({
       orgId: '1',
@@ -24,6 +31,8 @@ describe('EditOrganization', () => {
       organization: { id: 1, name: 'testOrg' },
       setOrganization: () => {},
     });
+
+    updateOrgSpy = jest.spyOn(OrganizationService, 'updateOrganization');
   });
 
   test('renders an input with the current organization name', async () => {
@@ -35,7 +44,6 @@ describe('EditOrganization', () => {
   });
 
   test('updates the organization', async () => {
-    const updateOrgSpy = jest.spyOn(OrganizationService, 'updateOrganization');
     updateOrgSpy.mockResolvedValue({} as any);
 
     render(<EditOrganization />);
@@ -51,8 +59,21 @@ describe('EditOrganization', () => {
     );
   });
 
+  test('does not update the organization if no current organization', async () => {
+    useOrganizationMock.mockReturnValue({ organization: undefined });
+
+    render(<EditOrganization />);
+
+    const input = screen.getByPlaceholderText('name');
+    fireEvent.change(input, { target: { value: 'newName' } });
+
+    const submit = screen.getByText('Save');
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(updateOrgSpy).toHaveBeenCalledTimes(0));
+  });
+
   test('renders a failure toast when update fails', async () => {
-    const updateOrgSpy = jest.spyOn(OrganizationService, 'updateOrganization');
     updateOrgSpy.mockRejectedValueOnce('Bad');
 
     render(<EditOrganization />);
@@ -66,8 +87,6 @@ describe('EditOrganization', () => {
   });
 
   test('requires name to be filled', async () => {
-    const updateOrgSpy = jest.spyOn(OrganizationService, 'updateOrganization');
-
     render(<EditOrganization />);
 
     const input = screen.getByPlaceholderText('name');
@@ -78,5 +97,11 @@ describe('EditOrganization', () => {
     fireEvent.click(submit);
 
     await waitFor(() => expect(updateOrgSpy).toBeCalledTimes(0));
+  });
+
+  afterEach(() => {
+    updateOrgSpy.mockRestore();
+    useParamsMock.mockRestore();
+    useOrganizationMock.mockRestore();
   });
 });

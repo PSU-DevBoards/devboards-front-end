@@ -18,10 +18,22 @@ describe('service', () => {
     expect(service.get('/')).rejects.toEqual(response);
   });
 
+  test('patch rejects on request failure', () => {
+    const service = new Service() as any;
+
+    expect(service.patch('/')).rejects.toEqual(response);
+  });
+
   test('post rejects on request failure', () => {
     const service = new Service() as any;
 
     expect(service.post('/')).rejects.toEqual(response);
+  });
+
+  test('delete rejects on a failure', () => {
+    const service = new Service() as any;
+
+    expect(service.delete('/')).rejects.toEqual(response);
   });
 
   afterEach(() => {

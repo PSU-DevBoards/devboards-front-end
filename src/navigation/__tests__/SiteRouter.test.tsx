@@ -25,6 +25,16 @@ describe('SiteRouter', () => {
     expect(() => screen.getByText('Authed')).toThrow();
   });
 
+  test('does not redirect if user is authenticated', () => {
+    mockedUseAuth0.mockReturnValue({
+      isAuthenticated: true,
+    });
+
+    render(<SiteRouter />);
+
+    expect(screen.getByText('Authed')).toBeInTheDocument();
+  });
+
   afterEach(() => {
     mockedUseAuth0.mockRestore();
   });

@@ -109,6 +109,27 @@ describe('organizationService', () => {
     );
   });
 
+  test('deletes an organization by id', () => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        text: () => Promise.resolve(''),
+      } as any)
+    );
+
+    organizationService.deleteOrganization(1);
+
+    expect(global.fetch).toBeCalledWith(
+      expect.stringContaining('/organizations/1'),
+      expect.objectContaining({
+        method: 'DELETE',
+        headers: {
+          Authorization: expect.any(String),
+        },
+      })
+    );
+  });
+
   afterEach(() => {
     (global.fetch as jest.Mock).mockRestore();
   });

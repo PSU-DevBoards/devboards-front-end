@@ -50,11 +50,10 @@ const NewOrganizationModel = ({
   onClose: () => void;
   onSubmit: (values: { name: string }) => void;
 }) => {
-  const { handleSubmit, handleChange, errors, touched, values, submitForm } =
-    useFormik({
-      initialValues: { name: '' },
-      onSubmit,
-    });
+  const { handleSubmit, handleChange, handleBlur, errors, values } = useFormik({
+    initialValues: { name: '' },
+    onSubmit,
+  });
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -63,11 +62,12 @@ const NewOrganizationModel = ({
         <ModalHeader>New Organizaiton</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <form onSubmit={handleSubmit}>
-            <FormControl isInvalid={!!errors.name && touched.name} isRequired>
+          <form id="create_org_form" onSubmit={handleSubmit}>
+            <FormControl isInvalid={!!errors.name} isRequired>
               <FormLabel htmlFor="name">Organization Name</FormLabel>
               <Input
                 onChange={handleChange}
+                onBlur={handleBlur}
                 id="name"
                 placeholder="name"
                 value={values.name}
@@ -87,10 +87,9 @@ const NewOrganizationModel = ({
           </Button>
           <Button
             colorScheme="purple"
-            onClick={() => {
-              submitForm();
-              onClose();
-            }}
+            form="create_org_form"
+            type="submit"
+            aria-label="Confirm Create Organization"
           >
             Create
           </Button>
@@ -115,6 +114,8 @@ function Organizations() {
   };
 
   const onSubmitNewOrganization = ({ name }: { name: string }) => {
+    onClose();
+
     OrganizationService.createOrganization(name)
       .then((organization) => {
         setOrganizations([...organizations, organization]);
@@ -175,7 +176,12 @@ function Organizations() {
                   <Td>
                     <HStack>
                       <Link to={`/organizations/${id}`}>
-                        <Button colorScheme="purple">View</Button>
+                        <Button
+                          colorScheme="purple"
+                          aria-label="View Organization"
+                        >
+                          View
+                        </Button>
                       </Link>
                       {username === user?.username ? (
                         <>
@@ -217,7 +223,11 @@ function Organizations() {
               ))}
             </Tbody>
           </Table>
-          <Button colorScheme="purple" onClick={onClickNewOrganization}>
+          <Button
+            colorScheme="purple"
+            onClick={onClickNewOrganization}
+            aria-label="Create Organization"
+          >
             New Organization
           </Button>
         </Section>
