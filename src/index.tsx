@@ -5,8 +5,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import config from './config';
-import './styles/index.css';
+import { UserProvider } from './contexts/user-context';
 import reportWebVitals from './reportWebVitals';
+import './styles/index.css';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -18,7 +19,9 @@ ReactDOM.render(
         audience={config.AUTH0_API_AUDIENCE!}
         useRefreshTokens
       >
-        <App />
+        <UserProvider>
+          <App />
+        </UserProvider>
       </Auth0Provider>
     </ChakraProvider>
   </React.StrictMode>,

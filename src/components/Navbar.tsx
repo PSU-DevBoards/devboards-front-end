@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BiExit, BiGroup, BiUser } from 'react-icons/bi';
+import { Link } from 'react-router-dom';
 
 /* Default pages header */
 const Navbar = () => {
@@ -48,10 +49,12 @@ const Navbar = () => {
             <BiUser />
             <Text px={2}>Your Profile</Text>
           </MenuItem>
-          <MenuItem color="gray.600">
-            <BiGroup />
-            <Text px={2}>Organizations</Text>
-          </MenuItem>
+          <Link to="/organizations">
+            <MenuItem color="gray.600">
+              <BiGroup />
+              <Text px={2}>Organizations</Text>
+            </MenuItem>
+          </Link>
           <MenuDivider />
           <MenuItem
             color="red.500"

@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Navbar from '../Navbar';
 
 jest.mock('@auth0/auth0-react');
@@ -13,7 +14,11 @@ describe('Navbar', () => {
       logout: logoutMock,
     });
 
-    render(<Navbar />);
+    render(
+      <Router>
+        <Navbar />
+      </Router>
+    );
 
     const button = screen.getByTestId('logout_button');
     fireEvent.click(button);
