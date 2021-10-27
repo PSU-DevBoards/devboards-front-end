@@ -1,4 +1,10 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitFor,
+  fireEvent,
+  cleanup,
+} from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { useUser } from '../../contexts/user-context';
 import userService, { UserOrganization } from '../../services/user.service';
@@ -12,6 +18,17 @@ jest.mock('../../contexts/user-context');
 jest.mock('../../services/organization.service');
 
 const useUserMock: jest.Mock = useUser as any;
+
+const triggerCreation = async () => {
+  const createButton = screen.getByLabelText('Create Organization');
+  fireEvent.click(createButton);
+
+  const nameInput = await waitFor(() => screen.getByPlaceholderText('name'));
+  fireEvent.change(nameInput, { target: { value: 'newOrg' } });
+
+  const saveButton = screen.getByLabelText('Confirm Create Organization');
+  fireEvent.click(saveButton);
+};
 
 describe('Organizations', () => {
   let getOrganizationsSpy: jest.SpyInstance<Promise<UserOrganization[]>, []>;
@@ -53,7 +70,7 @@ describe('Organizations', () => {
     deleteOrgSpy.mockResolvedValue('');
 
     createOrgSpy = jest.spyOn(OrganizationService, 'createOrganization');
-    createOrgSpy.mockResolvedValue(org1);
+    createOrgSpy.mockResolvedValue({ ...org1, name: 'createdOrg' });
   });
 
   test('displays a list of organizations', async () => {
@@ -110,27 +127,6 @@ describe('Organizations', () => {
     );
   });
 
-  test('creates a new organization', async () => {
-    render(
-      <Router>
-        <Organizations />
-      </Router>
-    );
-
-    const createButton = screen.getByLabelText('Create Organization');
-    fireEvent.click(createButton);
-
-    const nameInput = await waitFor(() => screen.getByPlaceholderText('name'));
-    fireEvent.change(nameInput, { target: { value: 'newOrg' } });
-
-    const saveButton = screen.getByLabelText('Confirm Create Organization');
-    fireEvent.click(saveButton);
-
-    await waitFor(() =>
-      expect(screen.getByText('Organization Created')).toBeVisible()
-    );
-  });
-
   test('requires an organization name to create an organization', async () => {
     render(
       <Router>
@@ -151,6 +147,20 @@ describe('Organizations', () => {
     await waitFor(() => expect(createOrgSpy).toHaveBeenCalledTimes(0));
   });
 
+  test('creates a new organization', async () => {
+    render(
+      <Router>
+        <Organizations />
+      </Router>
+    );
+
+    triggerCreation();
+
+    await waitFor(() =>
+      expect(screen.findAllByText('Organization Created')).toBeTruthy()
+    );
+  });
+
   test('displays an error when create fails', async () => {
     createOrgSpy.mockRejectedValue({});
 
@@ -160,14 +170,7 @@ describe('Organizations', () => {
       </Router>
     );
 
-    const createButton = screen.getByLabelText('Create Organization');
-    fireEvent.click(createButton);
-
-    const nameInput = await waitFor(() => screen.getByPlaceholderText('name'));
-    fireEvent.change(nameInput, { target: { value: 'newOrg' } });
-
-    const saveButton = screen.getByLabelText('Confirm Create Organization');
-    fireEvent.click(saveButton);
+    triggerCreation();
 
     await waitFor(() =>
       expect(screen.getByText('Organization Creation Failed')).toBeVisible()
@@ -179,5 +182,6 @@ describe('Organizations', () => {
     deleteOrgSpy.mockRestore();
     getOrganizationsSpy.mockRestore();
     createOrgSpy.mockRestore();
+    cleanup();
   });
 });
