@@ -52,8 +52,7 @@ class Service {
     });
 
     /* if response OK (HTTP 2XX) return result -- otherwise reject promise so exception is invoked */
-    const text = response.text();
-    return response.ok ? text : text.then(Promise.reject.bind(Promise));
+    return response.ok ? response.text() : Promise.reject(response.statusText);
   }
 }
 
