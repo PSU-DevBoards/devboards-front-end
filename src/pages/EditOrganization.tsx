@@ -16,10 +16,22 @@ import {
   Tr,
   useToast,
   VStack,
+  ButtonGroup,
+  IconButton,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from '@chakra-ui/react';
-import { useFormik } from 'formik';
+import { BiPlus } from "react-icons/bi";
+import { FormikErrors, useFormik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import Section from '../components/Section';
 import { useOrganization } from '../contexts/organization-context';
 import OrganizationService, {
@@ -42,13 +54,16 @@ const OrganizationForm = () => {
             title: 'Organization Updated',
           });
         })
-        .catch((err) =>
-          toast({
-            position: 'bottom-right',
-            status: 'error',
-            title: 'Organization Update Failed',
-            description: err,
-          })
+        .catch((err) => {
+            const [errorMessages] = err.errors;
+
+            toast({
+              position: 'bottom-right',
+              status: 'error',
+              title: 'Organization Update Failed',
+              description: errorMessages,
+            })
+          }
         );
   };
 
@@ -79,7 +94,7 @@ const OrganizationForm = () => {
           </FormControl>
         </SimpleGrid>
         <Divider />
-        <Flex justifyContent="flex-end" w="full">
+        <Flex justifyContent="flex-end" w="full" paddingTop="15px">
           <Button w={['full', 'sm']} type="submit" colorScheme="purple">
             Save
           </Button>
@@ -92,11 +107,14 @@ const OrganizationForm = () => {
 const UsersTable = () => {
   const [orgUsers, setOrgUsers] = useState<Array<OrganizationUser>>([]);
   const { orgId } = useParams<{ orgId: string }>();
+  const history = useHistory();
 
   useEffect(() => {
     const id = parseInt(orgId, 10);
 
-    OrganizationService.getOrganizationUsers(id).then(setOrgUsers);
+    OrganizationService.getOrganizationUsers(id)
+    .then(setOrgUsers)
+    .catch(() => history.push('/dashboard'));
   }, []);
 
   return (
@@ -122,6 +140,29 @@ const UsersTable = () => {
 };
 
 function EditOrganization() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { organization } = useOrganization();
+
+  // eslint-disable-next-line
+  const onInviteUser = ({ email }: { email: string }) => {
+    /* Future code to send API call */
+  };
+
+  const { handleSubmit, handleChange, handleBlur, errors } =
+    useFormik({
+      initialValues: { email: '' },
+      onSubmit: onInviteUser,
+      validate: (values: { email: string }) => {
+        const error: FormikErrors<{ email: string }> = {};
+        if (!values.email) {
+          error.email = 'Required';
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+          error.email = 'Invalid email address';
+        }
+        return error;
+      },
+    });
+  
   return (
     <VStack alignItems="initial">
       <Heading textAlign="left">Edit Organization</Heading>
@@ -130,6 +171,40 @@ function EditOrganization() {
       </Section>
       <Section title="Organization Users">
         <UsersTable />
+        <Flex justifyContent="flex-end" w="full" paddingTop="15px">
+          <ButtonGroup w={['full', 'sm']} justifyContent="flex-end" isAttached onClick={onOpen} colorScheme="purple" variant="outline">
+              <Button mr="-px">Invite</Button>
+              <Modal size="xl" isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <form onSubmit={handleSubmit}>
+                  <ModalContent>
+                    <ModalHeader>Invite User to {organization?.name}</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody pb={6}>
+                      <FormControl
+                        isInvalid={!!errors.email}
+                        isRequired
+                      >
+                        <FormLabel htmlFor="email">Email Address:</FormLabel>
+                        <Input
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          id="email"
+                          placeholder="Email"
+                        />
+                        <FormErrorMessage>{errors.email}</FormErrorMessage>
+                      </FormControl>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button type="submit" colorScheme="purple" variant="solid" mr={3}>Send Invitation</Button>
+                      <Button onClick={onClose}>Cancel</Button>
+                    </ModalFooter>
+                  </ModalContent>
+                </form>
+              </Modal>
+              <IconButton aria-label="Invite User" icon={<BiPlus />} />
+            </ButtonGroup>
+          </Flex>
       </Section>
     </VStack>
   );
