@@ -7,11 +7,9 @@ import {
 } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { useUser } from '../../contexts/user-context';
-import userService, { UserOrganization } from '../../services/user.service';
+import userService, { Organization } from '../../services/user.service';
 import Organizations from '../Organizations';
-import OrganizationService, {
-  Organization,
-} from '../../services/organization.service';
+import OrganizationService from '../../services/organization.service';
 
 jest.mock('../../services/user.service');
 jest.mock('../../contexts/user-context');
