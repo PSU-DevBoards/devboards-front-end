@@ -24,8 +24,18 @@ class OrganizationService extends DbApiService {
     return this.get(`/organizations/${id}/users`);
   }
 
-  public async createOrganization(name: string): Promise<Organization> {
+  public async createOrganization(
+    name: string
+  ): Promise<Organization> {
     return this.post(`/organizations`, { name });
+  }
+
+  public async inviteUser(
+    id: number,
+    email: string,
+    role_id: number
+  ): Promise<OrganizationUser> {
+    return this.post(`/organizations/${id}/users`, { email,  role_id });
   }
 
   public async updateOrganization(

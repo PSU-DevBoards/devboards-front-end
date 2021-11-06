@@ -26,6 +26,7 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  UseToastOptions,
 } from '@chakra-ui/react';
 import { BiPlus } from "react-icons/bi";
 import { FormikErrors, useFormik } from 'formik';
@@ -45,24 +46,28 @@ const OrganizationForm = () => {
   const onSubmitForm = ({ name }: { name: string }) => {
     if (organization)
       OrganizationService.updateOrganization(organization?.id, { name })
-        .then((org) => {
-          setOrganization(org);
-
+        .then(() => {
+          organization.name = name;          
+          setOrganization(organization);
           toast({
             position: 'bottom-right',
             status: 'success',
             title: 'Organization Updated',
           });
         })
-        .catch((err) => {
-            const [errorMessages] = err.errors;
-
-            toast({
+        .catch((err) => {            
+            const toastData: UseToastOptions = {
               position: 'bottom-right',
               status: 'error',
               title: 'Organization Update Failed',
-              description: errorMessages,
-            })
+            };
+
+            if( err.errors ){
+              const [errorMessages] = err.errors;
+              toastData.description = errorMessages;
+            }
+
+            toast(toastData);
           }
         );
   };
@@ -142,10 +147,27 @@ const UsersTable = () => {
 function EditOrganization() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { organization } = useOrganization();
+  const toast = useToast();
 
-  // eslint-disable-next-line
   const onInviteUser = ({ email }: { email: string }) => {
-    /* Future code to send API call */
+    if( organization ){
+      OrganizationService.inviteUser(organization?.id, email, 2).then((data) => {
+        toast({
+            position: 'bottom-right',
+            status: 'success',
+            title: 'Invitation Sent',
+            description: `User ${email} (${data.user_id}) invited successfully!`,
+        });
+        onClose();
+      }).catch(() => {
+        toast({
+          position: 'bottom-right',
+          status: 'error',
+          title: 'Invitation Failed',
+          description: `User ${email} could not be invited.`,
+      });
+      });
+    }
   };
 
   const { handleSubmit, handleChange, handleBlur, errors } =
