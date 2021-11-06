@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import NoOrganization from '../components/NoOrganization';
-import userService, { UserOrganization } from '../services/user.service';
+import userService, { Organization } from '../services/user.service';
 
 function Dashboard() {
-  const [organizations, setOrganizations] = useState<Array<UserOrganization>>(
+  const [organizations, setOrganizations] = useState<Array<Organization>>(
     []
   );
 

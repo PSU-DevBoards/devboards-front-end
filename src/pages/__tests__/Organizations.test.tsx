@@ -29,7 +29,7 @@ const triggerCreation = async () => {
 };
 
 describe('Organizations', () => {
-  let getOrganizationsSpy: jest.SpyInstance<Promise<UserOrganization[]>, []>;
+  let getOrganizationsSpy: jest.SpyInstance<Promise<Organization[]>, []>;
   let deleteOrgSpy: jest.SpyInstance<Promise<string>, [id: number]>;
   let createOrgSpy: jest.SpyInstance<Promise<Organization>, [name: string]>;
 
