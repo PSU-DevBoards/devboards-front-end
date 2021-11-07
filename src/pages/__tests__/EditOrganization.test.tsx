@@ -126,6 +126,39 @@ describe('EditOrganization', () => {
     );
   });
 
+  test('invite user modal requires valid email', async () => {
+    inviteUserSpy.mockResolvedValue({ organization_id: 1, user_id: 2, role_id: 2 } as any);
+
+    render(<EditOrganization />);
+
+    const button = screen.getByText('Invite');
+    fireEvent.click(button);
+
+    const input = screen.getByPlaceholderText('Email');
+    fireEvent.change(input, { target: { value: 'test' } });
+
+    await waitFor(() =>
+    expect(screen.getByText('Invalid email address')).toBeVisible()
+    );
+  });
+
+  test('invite user modal requires entry', async () => {
+    inviteUserSpy.mockResolvedValue({ organization_id: 1, user_id: 2, role_id: 2 } as any);
+
+    render(<EditOrganization />);
+
+    const button = screen.getByText('Invite');
+    fireEvent.click(button);
+
+    const input = screen.getByPlaceholderText('Email');
+    fireEvent.change(input, { target: { value: ' ' } });
+    fireEvent.change(input, { target: { value: '' } });
+
+    await waitFor(() =>
+    expect(screen.getByText('Required')).toBeVisible()
+    );
+  });
+
   test('renders a failure toast when invite user fails', async () => {
     inviteUserSpy.mockRejectedValueOnce({ errors: ['ErrorMessage'] });
 
