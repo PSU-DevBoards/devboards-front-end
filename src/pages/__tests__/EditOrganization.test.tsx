@@ -26,7 +26,7 @@ describe('EditOrganization', () => {
 
   let inviteUserSpy: jest.SpyInstance<
     Promise<OrganizationUser>,
-    [id: number, values: Pick<OrganizationUser, 'user_id'>]
+    [id: number, email: string, role_id: number]
   >;
 
   beforeEach(() => {
@@ -40,6 +40,7 @@ describe('EditOrganization', () => {
     });
 
     updateOrgSpy = jest.spyOn(OrganizationService, 'updateOrganization');
+    inviteUserSpy = jest.spyOn(OrganizationService, 'inviteUser');
   });
 
   test('renders an input with the current organization name', async () => {
@@ -121,7 +122,7 @@ describe('EditOrganization', () => {
     fireEvent.click(submit);
 
     await waitFor(() =>
-      expect(inviteUserSpy).toHaveBeenCalledWith(1, { email: 'test@test.com', role_id: 2 })
+      expect(inviteUserSpy).toHaveBeenCalledWith(1, 'test@test.com', 2)
     );
   });
 
@@ -140,7 +141,7 @@ describe('EditOrganization', () => {
     fireEvent.click(submit);
 
     await waitFor(() =>
-      expect(screen.getByText('ErrorMessage')).toBeVisible()
+      expect(screen.getByText('Invitation Failed')).toBeVisible()
     );
   });
 
