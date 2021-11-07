@@ -81,6 +81,24 @@ describe('EditOrganization', () => {
     await waitFor(() => expect(updateOrgSpy).toHaveBeenCalledTimes(0));
   });
 
+
+  test('does not invite user if no current organization', async () => {
+    useOrganizationMock.mockReturnValue({ organization: undefined });
+
+    render(<EditOrganization />);
+
+    const button = screen.getByText('Invite');
+    fireEvent.click(button);
+
+    const input = screen.getByPlaceholderText('Email');
+    fireEvent.change(input, { target: { value: 'test@test.com' } });
+
+    const submit = screen.getByText('Send Invitation');
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(inviteUserSpy).toHaveBeenCalledTimes(0));
+  });
+
   test('renders a failure toast when update fails', async () => {
     updateOrgSpy.mockRejectedValueOnce({ errors: ['ErrorMessage'] });
 
@@ -91,6 +109,19 @@ describe('EditOrganization', () => {
 
     await waitFor(() =>
       expect(screen.getByText('ErrorMessage')).toBeVisible()
+    );
+  });
+
+  test('renders a failure toast when update fails with no error message', async () => {
+    updateOrgSpy.mockRejectedValueOnce({ errors: undefined });
+
+    render(<EditOrganization />);
+
+    const submit = screen.getByText('Save');
+    fireEvent.click(submit);
+
+    await waitFor(() =>
+      expect(screen.getByText('Organization Update Failed')).toBeVisible()
     );
   });
 
