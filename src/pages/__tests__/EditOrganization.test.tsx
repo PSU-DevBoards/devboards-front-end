@@ -11,6 +11,7 @@ jest.mock('react-router');
 jest.mock('../../services/organization.service', () => ({
   updateOrganization: () => Promise.resolve({}),
   getOrganizationUsers: () => Promise.resolve([{ user_id: 1 }]),
+  inviteUser: () => Promise.resolve({ organization_id: 1, user_id: 1, role_id: 2 }),
 }));
 
 const useOrganizationMock: jest.Mock = useOrganization as any;
@@ -74,7 +75,7 @@ describe('EditOrganization', () => {
   });
 
   test('renders a failure toast when update fails', async () => {
-    updateOrgSpy.mockRejectedValueOnce('Bad');
+    updateOrgSpy.mockRejectedValueOnce({ errors: ['ErrorMessage'] });
 
     render(<EditOrganization />);
 
@@ -82,7 +83,7 @@ describe('EditOrganization', () => {
     fireEvent.click(submit);
 
     await waitFor(() =>
-      expect(screen.getByText('Organization Update Failed')).toBeVisible()
+      expect(screen.getByText('ErrorMessage')).toBeVisible()
     );
   });
 
