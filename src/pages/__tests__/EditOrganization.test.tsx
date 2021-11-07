@@ -3,6 +3,7 @@ import { useParams } from 'react-router';
 import { useOrganization } from '../../contexts/organization-context';
 import OrganizationService, {
   Organization,
+  OrganizationUser
 } from '../../services/organization.service';
 import EditOrganization from '../EditOrganization';
 
@@ -21,6 +22,11 @@ describe('EditOrganization', () => {
   let updateOrgSpy: jest.SpyInstance<
     Promise<Organization>,
     [id: number, values: Pick<Organization, 'name'>]
+  >;
+
+  let inviteUserSpy: jest.SpyInstance<
+    Promise<OrganizationUser>,
+    [id: number, values: Pick<OrganizationUser, 'user_id'>]
   >;
 
   beforeEach(() => {
@@ -98,6 +104,44 @@ describe('EditOrganization', () => {
     fireEvent.click(submit);
 
     await waitFor(() => expect(updateOrgSpy).toBeCalledTimes(0));
+  });
+
+  test('invite user', async () => {
+    inviteUserSpy.mockResolvedValue({ organization_id: 1, user_id: 2, role_id: 2 } as any);
+
+    render(<EditOrganization />);
+
+    const button = screen.getByText('Invite');
+    fireEvent.click(button);
+
+    const input = screen.getByPlaceholderText('Email');
+    fireEvent.change(input, { target: { value: 'test@test.com' } });
+
+    const submit = screen.getByText('Send Invitation');
+    fireEvent.click(submit);
+
+    await waitFor(() =>
+      expect(inviteUserSpy).toHaveBeenCalledWith(1, { email: 'test@test.com', role_id: 2 })
+    );
+  });
+
+  test('renders a failure toast when invite user fails', async () => {
+    inviteUserSpy.mockRejectedValueOnce({ errors: ['ErrorMessage'] });
+
+    render(<EditOrganization />);
+
+    const button = screen.getByText('Invite');
+    fireEvent.click(button);
+
+    const input = screen.getByPlaceholderText('Email');
+    fireEvent.change(input, { target: { value: 'test@test.com' } });
+
+    const submit = screen.getByText('Send Invitation');
+    fireEvent.click(submit);
+
+    await waitFor(() =>
+      expect(screen.getByText('ErrorMessage')).toBeVisible()
+    );
   });
 
   afterEach(() => {
