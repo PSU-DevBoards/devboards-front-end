@@ -7,9 +7,8 @@ import {
 } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { useUser } from '../../contexts/user-context';
-import userService, { Organization } from '../../services/user.service';
 import Organizations from '../Organizations';
-import OrganizationService from '../../services/organization.service';
+import OrganizationService, { Organization } from '../../services/organization.service';
 
 jest.mock('../../services/user.service');
 jest.mock('../../contexts/user-context');
@@ -58,7 +57,7 @@ describe('Organizations', () => {
     });
 
     getOrganizationsSpy = jest.spyOn(
-      userService,
+      OrganizationService,
       'getCurrentUserOrganizations'
     );
 

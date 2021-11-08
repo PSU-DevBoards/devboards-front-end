@@ -47,8 +47,7 @@ const OrganizationForm = () => {
     if (organization)
       OrganizationService.updateOrganization(organization?.id, { name })
         .then(() => {
-          organization.name = name;          
-          setOrganization(organization);
+          setOrganization({...organization, name});
           toast({
             position: 'bottom-right',
             status: 'success',

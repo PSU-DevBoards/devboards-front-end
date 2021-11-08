@@ -39,7 +39,6 @@ import { useUser } from '../contexts/user-context';
 import OrganizationService, {
   Organization,
 } from '../services/organization.service';
-import UserService from '../services/user.service';
 
 const NewOrganizationModel = ({
   isOpen,
@@ -106,7 +105,7 @@ function Organizations() {
   const toast = useToast();
 
   useEffect(() => {
-    UserService.getCurrentUserOrganizations().then(setOrganizations);
+    OrganizationService.getCurrentUserOrganizations().then(setOrganizations);
   }, []);
 
   const onClickNewOrganization = () => {

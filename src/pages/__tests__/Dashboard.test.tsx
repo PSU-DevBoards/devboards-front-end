@@ -1,5 +1,5 @@
 import { render, waitFor, screen } from '@testing-library/react';
-import userService from '../../services/user.service';
+import OrganizationService from '../../services/organization.service';
 import Dashboard from '../Dashboard';
 
 jest.mock('../../services/user.service');
@@ -7,7 +7,7 @@ jest.mock('../../services/user.service');
 describe('Dashboard', () => {
   test('gets and displays the current user', async () => {
     const getOrganizationsSpy = jest.spyOn(
-      userService,
+      OrganizationService,
       'getCurrentUserOrganizations'
     );
     render(<Dashboard />);
@@ -16,7 +16,7 @@ describe('Dashboard', () => {
 
   test('displays no organizations if user belongs to no organizations', async () => {
     const getOrganizationsSpy = jest.spyOn(
-      userService,
+      OrganizationService,
       'getCurrentUserOrganizations'
     );
 

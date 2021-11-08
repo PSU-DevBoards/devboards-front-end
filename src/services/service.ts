@@ -8,9 +8,13 @@ class Service {
       headers: getAuthenticationHeader(),
     });
 
-    /* if response OK (HTTP 2XX) return result -- otherwise reject promise so exception is invoked */
-    const json = response.json();
-    return response.ok ? json : json.then(Promise.reject.bind(Promise));
+
+    if(response.headers.get('Content-Type') === 'application/json'){
+      const json = response.json();
+      return response.ok ? json : json.then(Promise.reject.bind(Promise));
+    }
+
+    return response.ok ? Promise.resolve({}) : Promise.reject.bind(Promise);
   }
 
   protected async post(endpoint: string, body: any) {
@@ -23,9 +27,13 @@ class Service {
       body: JSON.stringify(body),
     });
 
-    /* if response OK (HTTP 2XX) return result -- otherwise reject promise so exception is invoked */
-    const json = response.json();
-    return response.ok ? json : json.then(Promise.reject.bind(Promise));
+
+    if(response.headers.get('Content-Type') === 'application/json'){
+      const json = response.json();
+      return response.ok ? json : json.then(Promise.reject.bind(Promise));
+    }
+
+    return response.ok ? Promise.resolve({}) : Promise.reject.bind(Promise);
   }
 
   protected async patch(endpoint: string, body: any) {
@@ -38,9 +46,12 @@ class Service {
       body: JSON.stringify(body),
     });
 
-    /* if response OK (HTTP 2XX) return result -- otherwise reject promise so exception is invoked */
-    const json = response.json();
-    return response.ok ? json : json.then(Promise.reject.bind(Promise));
+    if(response.headers.get('Content-Type') === 'application/json'){
+      const json = response.json();
+      return response.ok ? json : json.then(Promise.reject.bind(Promise));
+    }
+
+    return response.ok ? Promise.resolve({}) : Promise.reject.bind(Promise);
   }
 
   protected async delete(endpoint: string) {
