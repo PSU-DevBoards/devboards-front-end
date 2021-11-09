@@ -10,7 +10,7 @@ describe('organizationService', () => {
       Promise.resolve({
         ok: true,
         headers: requestHeader,
-        json: () => Promise.resolve(org)
+        json: () => Promise.resolve(org),
       } as any)
     );
 
@@ -36,11 +36,12 @@ describe('organizationService', () => {
       Promise.resolve({
         ok: true,
         headers: requestHeader,
-        json: () => Promise.resolve(org)
+        json: () => Promise.resolve(org),
       } as any)
     );
 
-    const currentUserOrgs = await organizationService.getCurrentUserOrganizations();
+    const currentUserOrgs =
+      await organizationService.getCurrentUserOrganizations();
 
     expect(currentUserOrgs).toEqual(org);
     expect(global.fetch).toBeCalledWith(
@@ -174,6 +175,38 @@ describe('organizationService', () => {
         headers: {
           Authorization: expect.any(String),
         },
+      })
+    );
+  });
+
+  test('invites a user by email', () => {
+    organizationService.inviteUser(1, 'test@test.com', 1);
+
+    expect(global.fetch).toBeCalledWith(
+      expect.stringContaining('/organizations/1/users'),
+      expect.objectContaining({
+        method: 'POST',
+        headers: {
+          Authorization: expect.any(String),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: 'test@test.com',
+          role_id: 1,
+        }),
+      })
+    );
+  });
+
+  test('gets the current users organizations', () => {
+    organizationService.getCurrentUserJoinedOrganizations();
+
+    expect(global.fetch).toBeCalledWith(
+      expect.stringContaining('/users/me/organizations/joined'),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: expect.any(String),
+        }),
       })
     );
   });
