@@ -2,7 +2,7 @@ import { render, waitFor, screen } from '@testing-library/react';
 import OrganizationService from '../../services/organization.service';
 import Dashboard from '../Dashboard';
 
-jest.mock('../../services/user.service');
+jest.mock('../../services/organization.service');
 
 describe('Dashboard', () => {
   let getOrganizationsSpy: jest.SpyInstance;
@@ -12,11 +12,6 @@ describe('Dashboard', () => {
       OrganizationService,
       'getCurrentUserOrganizations'
     );
-  });
-
-  test('gets and displays the current user', async () => {
-    render(<Dashboard />);
-    await waitFor(() => expect(getOrganizationsSpy).toBeCalledTimes(1));
   });
 
   test('displays no organizations if user belongs to no organizations', async () => {

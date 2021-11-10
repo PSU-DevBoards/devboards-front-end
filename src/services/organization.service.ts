@@ -24,9 +24,7 @@ class OrganizationService extends DbApiService {
     return this.get(`/organizations/${id}/users`);
   }
 
-  public async createOrganization(
-    name: string
-  ): Promise<Organization> {
+  public async createOrganization(name: string): Promise<Organization> {
     return this.post(`/organizations`, { name });
   }
 
@@ -35,7 +33,7 @@ class OrganizationService extends DbApiService {
     email: string,
     role_id: number
   ): Promise<OrganizationUser> {
-    return this.post(`/organizations/${id}/users`, { email,  role_id });
+    return this.post(`/organizations/${id}/users`, { email, role_id });
   }
 
   public async updateOrganization(
@@ -53,7 +51,9 @@ class OrganizationService extends DbApiService {
     return this.get(`/users/me/organizations`);
   }
 
-  public async getCurrentUserJoinedOrganizations(): Promise<Array<OrganizationUser>> {
+  public async getCurrentUserJoinedOrganizations(): Promise<
+    Array<OrganizationUser>
+  > {
     return this.get(`/users/me/organizations/joined`);
   }
 }

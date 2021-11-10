@@ -17,11 +17,11 @@ const OrganizationService = {
         username: 'testUser',
       },
     }),
-    inviteUser: (id: number, email: string, role_id: number) =>
+  inviteUser: () =>
     Promise.resolve({
       organization_id: 1,
       user_id: 1,
-      role_id: 2
+      role_id: 2,
     }),
   deleteOrganization: () => Promise.resolve(''),
   getCurrentUserOrganizations: () =>
