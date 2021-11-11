@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import NoOrganization from '../components/NoOrganization';
-import userService, { UserOrganization } from '../services/user.service';
+import organizationService, {
+  Organization,
+} from '../services/organization.service';
 
 function Dashboard() {
-  const [organizations, setOrganizations] = useState<Array<UserOrganization>>(
-    []
-  );
+  const [organizations, setOrganizations] = useState<Array<Organization>>([]);
 
   useEffect(() => {
-    userService.getCurrentUserOrganizations().then(setOrganizations);
+    organizationService.getCurrentUserOrganizations().then(setOrganizations);
   }, []);
 
   return (

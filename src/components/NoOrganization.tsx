@@ -73,9 +73,9 @@ const NoOrganization = () => {
           flexDirection="column"
           py={10}
           px={10}
-          width={{ sm: '90%', md: '80%', lg: '80%', xl: '50%' }}
+          width={{ sm: '90%', md: '80%', lg: '80%', xl: '55%' }}
         >
-          <Text fontSize={['24px', '24px', '30px', '40px', '44px']}>
+          <Text fontSize={['24px', '24px', '30px', '40px', '36px']}>
             You do not currently own or belong to any organization.
           </Text>
           <Text fontSize={['14px', '14px', '20px', '20px', '24px']}>

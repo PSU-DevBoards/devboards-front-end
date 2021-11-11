@@ -8,15 +8,6 @@ const OrganizationService = {
         username: 'testUser',
       },
     }),
-
-  getOrganizationUsers: () =>
-    Promise.resolve([
-      {
-        organization_id: 1,
-        user_id: 1,
-        role_id: null,
-      },
-    ]),
   createOrganization: (name: string) =>
     Promise.resolve({
       id: 1,
@@ -26,7 +17,24 @@ const OrganizationService = {
         username: 'testUser',
       },
     }),
+  inviteUser: () =>
+    Promise.resolve({
+      organization_id: 1,
+      user_id: 1,
+      role_id: 2,
+    }),
   deleteOrganization: () => Promise.resolve(''),
+  getCurrentUserOrganizations: () =>
+    Promise.resolve([
+      {
+        id: 1,
+        name: 'testOrg',
+        owner: {
+          id: 1,
+          username: 'testUser',
+        },
+      },
+    ]),
 };
 
 export default OrganizationService;

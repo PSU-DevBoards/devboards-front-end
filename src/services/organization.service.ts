@@ -28,6 +28,14 @@ class OrganizationService extends DbApiService {
     return this.post(`/organizations`, { name });
   }
 
+  public async inviteUser(
+    id: number,
+    email: string,
+    role_id: number
+  ): Promise<OrganizationUser> {
+    return this.post(`/organizations/${id}/users`, { email, role_id });
+  }
+
   public async updateOrganization(
     id: number,
     values: Pick<Organization, 'name'>
@@ -37,6 +45,16 @@ class OrganizationService extends DbApiService {
 
   public async deleteOrganization(id: number) {
     return this.delete(`/organizations/${id}`);
+  }
+
+  public async getCurrentUserOrganizations(): Promise<Array<Organization>> {
+    return this.get(`/users/me/organizations`);
+  }
+
+  public async getCurrentUserJoinedOrganizations(): Promise<
+    Array<OrganizationUser>
+  > {
+    return this.get(`/users/me/organizations/joined`);
   }
 }
 

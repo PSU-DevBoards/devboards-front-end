@@ -7,11 +7,8 @@ import {
 } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { useUser } from '../../contexts/user-context';
-import userService, { UserOrganization } from '../../services/user.service';
 import Organizations from '../Organizations';
-import OrganizationService, {
-  Organization,
-} from '../../services/organization.service';
+import OrganizationService, { Organization } from '../../services/organization.service';
 
 jest.mock('../../services/user.service');
 jest.mock('../../contexts/user-context');
@@ -31,7 +28,7 @@ const triggerCreation = async () => {
 };
 
 describe('Organizations', () => {
-  let getOrganizationsSpy: jest.SpyInstance<Promise<UserOrganization[]>, []>;
+  let getOrganizationsSpy: jest.SpyInstance<Promise<Organization[]>, []>;
   let deleteOrgSpy: jest.SpyInstance<Promise<string>, [id: number]>;
   let createOrgSpy: jest.SpyInstance<Promise<Organization>, [name: string]>;
 
@@ -60,7 +57,7 @@ describe('Organizations', () => {
     });
 
     getOrganizationsSpy = jest.spyOn(
-      userService,
+      OrganizationService,
       'getCurrentUserOrganizations'
     );
 
