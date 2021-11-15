@@ -43,6 +43,8 @@ const OrganizationForm = () => {
   const toast = useToast();
   const { organization, setOrganization } = useOrganization();
 
+
+
   const onSubmitForm = ({ name }: { name: string }) => {
     if (organization)
       OrganizationService.updateOrganization(organization?.id, { name })
@@ -118,9 +120,13 @@ const UsersTable = () => {
 
     OrganizationService.getOrganizationUsers(id)
     .then(setOrgUsers)
-    .catch(() => history.push('/dashboard'));
+    .catch(() => history.push('/'));
   }, []);
-
+  const onClickRemoveUser = (removedUser: OrganizationUser) =>
+  {
+    OrganizationService.deleteOrganizationUser(removedUser.organization_id,removedUser.user_id).catch(()=>history.push('/'));
+    window.location.reload();
+  }
   return (
     <Table variant="simple" title="Users">
       <Thead>
@@ -128,6 +134,7 @@ const UsersTable = () => {
           <Th>Organization ID</Th>
           <Th>Role ID</Th>
           <Th isNumeric>User ID</Th>
+          <Th> Options</Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -136,6 +143,18 @@ const UsersTable = () => {
             <Td>{orgUser.organization_id}</Td>
             <Td>{orgUser.role_id}</Td>
             <Td isNumeric>{orgUser.user_id}</Td>
+            <Td>
+
+            <Flex justifyContent = "flex-end">
+                         <Button colorScheme ="green" >
+                             Confirm Change
+                         </Button>
+                         <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
+                             Remove User {orgUser.user_id}
+
+                         </Button>
+                     </Flex>
+            </Td>
           </Tr>
         ))}
       </Tbody>

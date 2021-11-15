@@ -51,6 +51,10 @@ class OrganizationService extends DbApiService {
     return this.get(`/users/me/organizations`);
   }
 
+   public async deleteOrganizationUser(id: number,userId: number) {
+      return this.delete(`/organizations/${id}/users/${userId}`);
+    }
+
   public async getCurrentUserJoinedOrganizations(): Promise<
     Array<OrganizationUser>
   > {

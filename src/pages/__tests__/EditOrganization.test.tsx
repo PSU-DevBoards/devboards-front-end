@@ -157,6 +157,25 @@ describe('EditOrganization', () => {
     );
   });
 
+  test('remove user',async () => {
+    inviteUserSpy.mockResolvedValue({ organization_id: 1, user_id: 2, role_id: 2 } as any);
+
+        render(<EditOrganization />);
+
+        const button = screen.getByText('Invite');
+        fireEvent.click(button);
+
+        const input = screen.getByPlaceholderText('Email');
+        fireEvent.change(input, { target: { value: 'test@test.com' } });
+
+        const submit = screen.getByText('Send Invitation');
+        fireEvent.click(submit);
+
+        const submit = screen.getByText('Remove User 2');
+
+        expect(inviteUserSpy).toNotHaveValue()
+  });
+
   test('invite user modal requires valid email', async () => {
     inviteUserSpy.mockResolvedValue({ organization_id: 1, user_id: 2, role_id: 2 } as any);
 

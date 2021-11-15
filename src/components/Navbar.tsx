@@ -55,6 +55,13 @@ const Navbar = () => {
               <Text px={2}>Organizations</Text>
             </MenuItem>
           </Link>
+
+          <Link to="/organizations/:orgId/users">
+                      <MenuItem color="gray.600">
+                        <BiGroup />
+                        <Text px={2}>Users</Text>
+                      </MenuItem>
+                    </Link>
           <MenuDivider />
           <MenuItem
             color="red.500"

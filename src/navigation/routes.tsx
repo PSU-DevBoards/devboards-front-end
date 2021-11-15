@@ -4,6 +4,7 @@ import Landing from '../pages/Landing';
 import Organizations from '../pages/Organizations';
 import EditOrganization from '../pages/EditOrganization';
 
+
 export default [
   { name: 'Landing', path: '/', authenticated: false, component: <Landing /> },
   {
@@ -23,5 +24,6 @@ export default [
     path: '/organizations/:orgId/edit',
     authenticated: true,
     component: <EditOrganization />,
-  },
+  }
+
 ];
