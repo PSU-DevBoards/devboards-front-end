@@ -12,6 +12,8 @@ import {
   ButtonGroup,
   IconButton,
   useEditableControls,
+  useToast,
+  UseToastOptions
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { BiCheck, BiX, BiEdit } from 'react-icons/bi';
@@ -28,7 +30,7 @@ function EditableControls() {
   } = useEditableControls();
 
   return isEditing ? (
-    <ButtonGroup size="xs">
+    <ButtonGroup size="sm">
       <IconButton
         aria-label="Submit changes"
         icon={<BiCheck />}
@@ -44,7 +46,7 @@ function EditableControls() {
     <IconButton
       marginLeft="10px"
       aria-label="Edit feature name"
-      size="xs"
+      size="sm"
       icon={<BiEdit />}
       {...getEditButtonProps()}
     />
@@ -53,11 +55,14 @@ function EditableControls() {
 
 function BoardSwimlane({ parent }: { parent: WorkItem }) {
   const [children, setChildren] = useState<Array<WorkItem>>([]);
-
+  const toast = useToast();
+  
   useEffect(() => {
-    WorkitemService.listWorkItems(parent.organization_id, {
-      parent_id: parent.id,
-    }).then(setChildren);
+    if( parent.organizationId ){
+      WorkitemService.getWorkItems(parent.organizationId, {
+        parentId: parent.id,
+      }).then(setChildren);
+    }
   }, []);
 
   const getBoardData = useCallback(() => buildBoardData(children), [children]);
@@ -84,10 +89,40 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
+                onSubmit={(newName) => {
+                  const toastData: UseToastOptions = {
+                    position: 'bottom-right',
+                    status: 'success',
+                    title: 'Work item modified',
+                  };
+
+                  /* eslint-disable no-param-reassign */
+                  parent.name = newName;
+                  console.log(parent);
+                  WorkitemService.updateWorkItem(parent.organizationId, parent.id, parent)
+                  .then(() => {
+                    toastData.description = `Feature name changed to: "${newName}".`;
+                  })
+                  .catch((err) => {
+                    console.log();
+                    toastData.status = 'error';
+                    toastData.description = "Feature modifications failed!";
+
+                    if( err.errors ){
+                      const [errorMessages] = err.errors;
+                      toastData.description = errorMessages;
+                    }
+                  })
+                  .finally(() => {
+                    toast(toastData);
+                  });
+                }}
               >
-                <EditablePreview />
-                <EditableInput />
-                <EditableControls />
+                <Flex alignItems="center">
+                  <EditablePreview />
+                  <EditableInput />
+                  <EditableControls />
+                </Flex>
               </Editable>
             </Flex>
           </Box>

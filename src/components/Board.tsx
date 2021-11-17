@@ -28,10 +28,11 @@ function Board() {
   } = useDisclosure();
 
   useEffect(() => {
-    if (organization)
-      WorkitemService.listWorkItems(organization.id, {
+    if (organization){
+      WorkitemService.getWorkItems(organization.id, {
         type: parentView as WorkItemType,
       }).then(setWorkItems);
+    }
   }, [organization]);
 
   return (
@@ -44,7 +45,7 @@ function Board() {
       <Flex flexDirection="row-reverse" pt={25}>
         <ButtonGroup size="md" isAttached variant="outline">
           <Button mr="-px" onClick={onOpenEditItem}>
-            New {parentView}
+            New {parentView.charAt(0) + parentView.slice(1).toLowerCase()}
           </Button>
           <IconButton aria-label="Add Feature" icon={<BiPlus />} />
         </ButtonGroup>

@@ -20,11 +20,26 @@ export type WorkItem = {
   status: 'BACKLOG' | 'READY' | 'IN_PROGRESS' | 'VERIFY' | 'DONE';
   priority: number;
   description?: string;
-  organization_id: number;
-  parent_id?: number;
+  organizationId: number;
+  parentId?: number;
 };
 
 class WorkItemService extends DbApiService {
+  public async getWorkItems(
+    orgId: number,
+    filter?: Partial<Pick<WorkItem, 'type' | 'parentId'>>
+  ): Promise<Array<WorkItem>> {
+    return this.get(`/organizations/${orgId}/work-items`);
+  }
+
+  public async updateWorkItem(
+    orgId: number,
+    workItemId: number,
+    workItem: Pick<WorkItem, 'name'>
+  ): Promise<WorkItem> {
+    return this.patch(`/organizations/${orgId}/work-items/${workItemId}`, workItem);
+  }
+  /*
   public async listWorkItems(
     orgId: number,
     filter?: Partial<Pick<WorkItem, 'type' | 'parent_id'>>
@@ -50,6 +65,7 @@ class WorkItemService extends DbApiService {
       },
     ]);
   }
+  */
 }
 
 export default new WorkItemService();

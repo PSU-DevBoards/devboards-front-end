@@ -55,7 +55,7 @@ class Service {
         ? response.json()
         : response.text();
 
-    return response.ok ? body : Promise.reject.bind(Promise);
+    return response.ok ? body : Promise.reject(response);
   }
 }
 
