@@ -52,7 +52,7 @@ class WorkItemService extends DbApiService {
         status: 'READY',
         priority: 1,
         description: 'Test',
-        organization_id: 1,
+        organizationId: 1,
       },
       {
         id: 5,
@@ -61,7 +61,7 @@ class WorkItemService extends DbApiService {
         status: 'READY',
         priority: 1,
         description: 'Test',
-        organization_id: 1,
+        organizationId: 1,
       },
     ]);
   }

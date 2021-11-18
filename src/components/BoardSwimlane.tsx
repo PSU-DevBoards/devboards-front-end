@@ -67,6 +67,14 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
 
   const getBoardData = useCallback(() => buildBoardData(children), [children]);
 
+  const handleCardMove = (cardId: string, fromLaneId: string, toLaneId: string, addedIndex: number) => {
+    if( fromLaneId === toLaneId ) return;
+
+    /* Code for updating work item status */
+    // WorkitemService.updateWorkItem(parent.organizationId, parseInt(cardId), nItem);
+    console.log(`${cardId} ${fromLaneId} ${toLaneId} ${addedIndex}`);
+  }
+
   return (
     <AccordionItem>
       <h2>
@@ -98,13 +106,11 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
 
                   /* eslint-disable no-param-reassign */
                   parent.name = newName;
-                  console.log(parent);
                   WorkitemService.updateWorkItem(parent.organizationId, parent.id, parent)
                   .then(() => {
                     toastData.description = `Feature name changed to: "${newName}".`;
                   })
                   .catch((err) => {
-                    console.log();
                     toastData.status = 'error';
                     toastData.description = "Feature modifications failed!";
 
@@ -133,6 +139,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
         <Board
           style={{ backgroundColor: 'white', height: 'auto' }}
           data={getBoardData()}
+          handleDragEnd={handleCardMove}
         />
       </AccordionPanel>
     </AccordionItem>

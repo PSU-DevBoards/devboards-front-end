@@ -11,8 +11,8 @@ jest.mock('../../contexts/organization-context');
 jest.mock('react-router');
 jest.mock('../../services/organization.service', () => ({
   updateOrganization: () => Promise.resolve({}),
-  getOrganizationUsers: () => Promise.resolve([{ user_id: 1 }]),
-  inviteUser: () => Promise.resolve({ organization_id: 1, user_id: 1, role_id: 2 }),
+  getOrganizationUsers: () => Promise.resolve([{ userId: 1 }]),
+  inviteUser: () => Promise.resolve({ organizationId: 1, userId: 1, roleId: 2 }),
 }));
 
 const useOrganizationMock: jest.Mock = useOrganization as any;
@@ -26,7 +26,7 @@ describe('EditOrganization', () => {
 
   let inviteUserSpy: jest.SpyInstance<
     Promise<OrganizationUser>,
-    [id: number, email: string, role_id: number]
+    [id: number, email: string, roleId: number]
   >;
 
   beforeEach(() => {
@@ -139,7 +139,7 @@ describe('EditOrganization', () => {
   });
 
   test('invite user', async () => {
-    inviteUserSpy.mockResolvedValue({ organization_id: 1, user_id: 2, role_id: 2 } as any);
+    inviteUserSpy.mockResolvedValue({ organizationId: 1, userId: 2, roleId: 2 } as any);
 
     render(<EditOrganization />);
 
@@ -158,7 +158,7 @@ describe('EditOrganization', () => {
   });
 
   test('invite user modal requires valid email', async () => {
-    inviteUserSpy.mockResolvedValue({ organization_id: 1, user_id: 2, role_id: 2 } as any);
+    inviteUserSpy.mockResolvedValue({ organizationId: 1, userId: 2, roleId: 2 } as any);
 
     render(<EditOrganization />);
 
@@ -174,7 +174,7 @@ describe('EditOrganization', () => {
   });
 
   test('invite user modal requires entry', async () => {
-    inviteUserSpy.mockResolvedValue({ organization_id: 1, user_id: 2, role_id: 2 } as any);
+    inviteUserSpy.mockResolvedValue({ organizationId: 1, userId: 2, roleId: 2 } as any);
 
     render(<EditOrganization />);
 

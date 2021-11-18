@@ -53,6 +53,7 @@ const buildBoardData = (workItems: Array<WorkItem>) => ({
     cards: workItems
       .filter((workItem) => workItem.status === lane.status)
       .map(workItemToCard),
+    label: `${workItems.filter((workItem) => workItem.status === lane.status).length}`,
   })),
 });
 
