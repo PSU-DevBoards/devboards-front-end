@@ -29,7 +29,7 @@ describe('Dashboard', () => {
     render(<Dashboard />);
     await waitFor(() => expect(getOrganizationsSpy).toBeCalledTimes(1));
 
-    expect(screen.getByText('Welcome to the dashboard!')).toBeInTheDocument();
+    expect(screen.getByText('Board Moved to OrganizationBoard.tsx')).toBeInTheDocument();
   });
 
   afterEach(() => {
