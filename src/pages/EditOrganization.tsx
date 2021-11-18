@@ -149,10 +149,12 @@ const UsersTable = () => {
                          <Button colorScheme ="green" >
                              Confirm Change
                          </Button>
-                         <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
-                             Remove User {orgUser.user_id}
+                         {
+                         orgUser.user_id !== 1 && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
+                            Remove User {orgUser.user_id}
 
-                         </Button>
+                            </Button>
+                         }
                      </Flex>
             </Td>
           </Tr>
