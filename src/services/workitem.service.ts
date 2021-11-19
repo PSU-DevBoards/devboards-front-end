@@ -29,7 +29,7 @@ class WorkItemService extends DbApiService {
     orgId: number,
     filter?: Partial<Pick<WorkItem, 'type' | 'parentId'>>
   ): Promise<Array<WorkItem>> {
-    return this.get(`/organizations/${orgId}/work-items`);
+    return this.get(`/organizations/${orgId}/work-items`, filter);
   }
 
   public async updateWorkItem(
@@ -37,7 +37,10 @@ class WorkItemService extends DbApiService {
     workItemId: number,
     workItem: Pick<WorkItem, 'name'>
   ): Promise<WorkItem> {
-    return this.patch(`/organizations/${orgId}/work-items/${workItemId}`, workItem);
+    return this.patch(
+      `/organizations/${orgId}/work-items/${workItemId}`,
+      workItem
+    );
   }
 
   public async createWorkItem(

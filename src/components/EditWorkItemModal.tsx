@@ -19,21 +19,26 @@ import {
   NumberInputStepper,
   FormErrorMessage,
   FormHelperText,
-  useToast
+  useToast,
 } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import { useState } from 'react';
-import WorkitemService, { WorkItem, WorkItemType } from '../services/workitem.service';
+import WorkitemService, {
+  WorkItem,
+  WorkItemType,
+} from '../services/workitem.service';
 import { useOrganization } from '../contexts/organization-context';
 
 function EditWorkItemModal({
   isOpen,
   onClose,
+  onWorkItemSaved,
   workItemType,
   workItem,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onWorkItemSaved: (workItem: WorkItem) => void;
   workItemType: WorkItemType;
   workItem?: WorkItem;
 }) {
@@ -42,48 +47,54 @@ function EditWorkItemModal({
   const toast = useToast();
 
   const getNiceItemType = () =>
-    (workItemType.charAt(0) + workItemType.slice(1).toLowerCase());
+    workItemType.charAt(0) + workItemType.slice(1).toLowerCase();
 
   const getModalTitle = () =>
     workItem ? `Edit F-${workItem.id}` : `New ${getNiceItemType()}`;
 
-    const onSubmitForm = (values: Record<string, string>) => {
-      let toastTitle = `${getNiceItemType()} created.`;
-      let toastDescription = '';
-      let toastStatus = 'success';
+  const onSubmitForm = (values: Record<string, string>) => {
+    let toastTitle = `${getNiceItemType()} created.`;
+    let toastDescription = '';
+    let toastStatus = 'success';
 
-      const newWorkItem = {
-        name: values.name,
-        priority: itemPriority,
-        description: values.description,
-        status: values.status,
-        type: workItemType,
-      }
-      WorkitemService.createWorkItem(organization?.id!, newWorkItem)
-        .then((item) => {
-          toastDescription = `${getNiceItemType()} "${item.name}" successfully created.`;
-        })
-        .catch(() => {
-          toastTitle = `${getNiceItemType()} creation failed.`;
-          toastDescription = `Error creating ${getNiceItemType()} "${values.name}", try again later`;
-          toastStatus = 'error';
-        })
-        .finally(() => {
-          toast({
-            position: 'bottom-right',
-            title: toastTitle,
-            description: toastDescription,
-            status: toastStatus as any,
-            duration: 5000,
-            isClosable: false,
-           });
-           onClose();
-        });
+    const newWorkItem = {
+      name: values.name,
+      priority: itemPriority,
+      description: values.description,
+      status: values.status,
+      type: workItemType,
     };
-  
+    WorkitemService.createWorkItem(organization?.id!, newWorkItem)
+      .then((item) => {
+        toastDescription = `${getNiceItemType()} "${
+          item.name
+        }" successfully created.`;
+
+        onWorkItemSaved(item);
+      })
+      .catch(() => {
+        toastTitle = `${getNiceItemType()} creation failed.`;
+        toastDescription = `Error creating ${getNiceItemType()} "${
+          values.name
+        }", try again later`;
+        toastStatus = 'error';
+      })
+      .finally(() => {
+        toast({
+          position: 'bottom-right',
+          title: toastTitle,
+          description: toastDescription,
+          status: toastStatus as any,
+          duration: 5000,
+          isClosable: false,
+        });
+        onClose();
+      });
+  };
+
   const { handleSubmit, handleChange, handleBlur, values } = useFormik({
     initialValues: { name: '', status: 'BACKLOG', description: '' },
-    onSubmit: onSubmitForm
+    onSubmit: onSubmitForm,
   });
 
   return (
@@ -96,7 +107,7 @@ function EditWorkItemModal({
           <form id="create_feature_form" onSubmit={handleSubmit}>
             <FormControl isRequired>
               <FormLabel htmlFor="name">Name</FormLabel>
-               <Input
+              <Input
                 onChange={handleChange}
                 onBlur={handleBlur}
                 id="name"
@@ -106,7 +117,7 @@ function EditWorkItemModal({
               />
               <FormErrorMessage>test</FormErrorMessage>
             </FormControl>
-            <br/>
+            <br />
             <FormControl isRequired>
               <FormLabel htmlFor="status">Status</FormLabel>
               <Select
@@ -125,11 +136,11 @@ function EditWorkItemModal({
               </Select>
               <FormErrorMessage>test</FormErrorMessage>
             </FormControl>
-            <br/>
+            <br />
             <FormControl>
               <FormLabel>Priority</FormLabel>
               <NumberInput
-                onChange={priority => setPriority(parseInt(priority, 10))}
+                onChange={(priority) => setPriority(parseInt(priority, 10))}
                 onBlur={handleBlur}
                 id="priority"
                 name="priority"
@@ -144,9 +155,11 @@ function EditWorkItemModal({
                   <NumberDecrementStepper />
                 </NumberInputStepper>
               </NumberInput>
-              <FormHelperText>Lower number signifies a higher priority</FormHelperText>
+              <FormHelperText>
+                Lower number signifies a higher priority
+              </FormHelperText>
             </FormControl>
-            <br/>
+            <br />
             <FormControl id="description">
               <FormLabel>Description</FormLabel>
               <Textarea
@@ -161,8 +174,12 @@ function EditWorkItemModal({
           </form>
         </ModalBody>
         <ModalFooter>
-          <Button mr={3} onClick={onClose}>Cancel</Button>
-          <Button form="create_feature_form" type="submit" colorScheme="purple">Create</Button>
+          <Button mr={3} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button form="create_feature_form" type="submit" colorScheme="purple">
+            Create
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
