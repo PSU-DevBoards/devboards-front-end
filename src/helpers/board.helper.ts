@@ -3,35 +3,35 @@ import { WorkItem } from '../services/workitem.service';
 const BASE_BOARD_DATA: ReactTrello.BoardData = {
   lanes: [
     {
-      id: 'lane1',
+      id: 'BACKLOG',
       title: 'Backlog',
       label: '2/2',
       status: 'BACKLOG',
       cards: [],
     },
     {
-      id: 'lane2',
+      id: 'READY',
       title: 'Ready',
       label: '0/0',
       status: 'READY',
       cards: [],
     },
     {
-      id: 'lane3',
+      id: 'IN_PROGRESS',
       title: 'In-Progress',
       label: '0/0',
       status: 'IN_PROGRESS',
       cards: [],
     },
     {
-      id: 'lane4',
+      id: 'VERIFY',
       title: 'Verify',
       label: '0/0',
       status: 'VERIFY',
       cards: [],
     },
     {
-      id: 'lane5',
+      id: 'DONE',
       title: 'Done',
       label: '0/0',
       status: 'DONE',

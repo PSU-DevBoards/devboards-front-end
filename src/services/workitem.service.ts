@@ -39,6 +39,14 @@ class WorkItemService extends DbApiService {
   ): Promise<WorkItem> {
     return this.patch(`/organizations/${orgId}/work-items/${workItemId}`, workItem);
   }
+
+  public async createWorkItem(
+    orgId: number,
+    workItem: Pick<WorkItem, 'name'>
+  ): Promise<WorkItem> {
+    return this.post(`/organizations/${orgId}/work-items/`, workItem);
+  }
+
   /*
   public async listWorkItems(
     orgId: number,

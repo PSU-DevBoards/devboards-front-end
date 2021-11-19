@@ -70,9 +70,17 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
   const handleCardMove = (cardId: string, fromLaneId: string, toLaneId: string, addedIndex: number) => {
     if( fromLaneId === toLaneId ) return;
 
-    /* Code for updating work item status */
-    // WorkitemService.updateWorkItem(parent.organizationId, parseInt(cardId), nItem);
+    /* TODO: Write code for updating work item status 
+    const newData : WorkItem = {
+      name: "",
+      id: "",
+      status: toLaneId as WorkItemStatus,
+      priority: 1,
+    }
+    WorkitemService.updateWorkItem(parent.organizationId, parseInt(cardId), newData);
+    */
     console.log(`${cardId} ${fromLaneId} ${toLaneId} ${addedIndex}`);
+    
   }
 
   return (
