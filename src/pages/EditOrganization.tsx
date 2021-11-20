@@ -8,6 +8,7 @@ import {
   Heading,
   Input,
   SimpleGrid,
+  Select,
   Table,
   Tbody,
   Td,
@@ -124,7 +125,7 @@ const UsersTable = () => {
   }, []);
   const onClickRemoveUser = (removedUser: OrganizationUser) =>
   {
-    OrganizationService.deleteOrganizationUser(removedUser.organization_id,removedUser.user_id).catch(()=>history.push('/'));
+    OrganizationService.deleteOrganizationUser(removedUser.organization_id,removedUser.user_id);
     window.location.reload();
   }
   return (
@@ -142,7 +143,13 @@ const UsersTable = () => {
           <Tr key={orgUser.user_id}>
             <Td>{orgUser.organization_id}</Td>
             <Td>{orgUser.role_id}</Td>
-            <Td isNumeric>{orgUser.user_id}</Td>
+            <Td>
+                <Select placeholder = {orgUser.user_id.toString()}>
+                  <option value="option1"> 1 </option>
+                  <option value="option2"> 2 </option>
+                  <option value="option3"> 3 </option>
+                  </Select>
+            </Td>
             <Td>
 
             <Flex justifyContent = "flex-end">
@@ -151,8 +158,7 @@ const UsersTable = () => {
                          </Button>
                          {
                          orgUser.user_id !== 1 && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
-                            Remove User {orgUser.user_id}
-
+                            Remove User
                             </Button>
                          }
                      </Flex>

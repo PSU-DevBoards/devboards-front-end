@@ -13,6 +13,7 @@ jest.mock('../../services/organization.service', () => ({
   updateOrganization: () => Promise.resolve({}),
   getOrganizationUsers: () => Promise.resolve([{ user_id: 1 }]),
   inviteUser: () => Promise.resolve({ organization_id: 1, user_id: 1, role_id: 2 }),
+  deleteOrganizationUser:() => Promise.resolve({})
 }));
 
 const useOrganizationMock: jest.Mock = useOrganization as any;
@@ -29,6 +30,15 @@ describe('EditOrganization', () => {
     [id: number, email: string, role_id: number]
   >;
 
+  let getOrganizationUsersSpy: jest.SpyInstance<
+  Promise<Array<OrganizationUser>>,
+  any
+  >;
+
+  let deleteOrganizationUserSpy:jest.SpyInstance<
+    Promise<any>,any
+  >;
+
   beforeEach(() => {
     useParamsMock.mockReturnValue({
       orgId: '1',
@@ -41,6 +51,9 @@ describe('EditOrganization', () => {
 
     updateOrgSpy = jest.spyOn(OrganizationService, 'updateOrganization');
     inviteUserSpy = jest.spyOn(OrganizationService, 'inviteUser');
+    getOrganizationUsersSpy = jest.spyOn(OrganizationService, 'getOrganizationUsers');
+    getOrganizationUsersSpy.mockResolvedValue([{ user_id: 1 }]);
+    deleteOrganizationUserSpy = jest.spyOn(OrganizationService, 'deleteOrganizationUser');
   });
 
   test('renders an input with the current organization name', async () => {
@@ -158,22 +171,14 @@ describe('EditOrganization', () => {
   });
 
   test('remove user',async () => {
-    inviteUserSpy.mockResolvedValue({ organization_id: 1, user_id: 2, role_id: 2 } as any);
 
+    getOrganizationUsersSpy.mockResolvedValue([{user_id:1 },{user_id:2,organization_id:1}])
         render(<EditOrganization />);
 
-        const button = screen.getByText('Invite');
-        fireEvent.click(button);
+        const remove = await waitFor(()  => screen.getByText('Remove User'));
+        fireEvent.click(remove);
 
-        const input = screen.getByPlaceholderText('Email');
-        fireEvent.change(input, { target: { value: 'test@test.com' } });
-
-        const submit = screen.getByText('Send Invitation');
-        fireEvent.click(submit);
-
-        const submit = screen.getByText('Remove User 2');
-
-        expect(inviteUserSpy).toNotHaveValue()
+        expect(deleteOrganizationUserSpy).toHaveBeenCalledWith(1,2);
   });
 
   test('invite user modal requires valid email', async () => {
