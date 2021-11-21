@@ -3,8 +3,13 @@ import { getAuthenticationHeader } from '../helpers/auth.helper';
 class Service {
   protected baseUrl: string = '';
 
-  protected async get(endpoint: string) {
-    const response = await fetch(this.baseUrl + endpoint, {
+  protected async get(endpoint: string, params?: Record<string, any>) {
+    const url =
+      this.baseUrl +
+      endpoint +
+      (params ? `?${new URLSearchParams(params)}` : '');
+
+    const response = await fetch(url, {
       headers: getAuthenticationHeader(),
     });
 

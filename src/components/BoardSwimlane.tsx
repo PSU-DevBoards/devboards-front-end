@@ -93,6 +93,9 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
     
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onWorkItemSaved = (workItem: WorkItem) => { }
+
   return (
     <AccordionItem>
       <h2>
@@ -170,6 +173,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
         <EditWorkItemModal
           workItemType="STORY"
           isOpen={isEditItemOpen}
+          onWorkItemSaved={onWorkItemSaved}
           onClose={onCloseEditItem}
         />
       </AccordionPanel>

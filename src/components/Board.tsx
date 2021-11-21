@@ -28,12 +28,25 @@ function Board() {
   } = useDisclosure();
 
   useEffect(() => {
-    if (organization){
+    if (organization) {
       WorkitemService.getWorkItems(organization.id, {
         type: parentView as WorkItemType,
       }).then(setWorkItems);
     }
   }, [organization]);
+
+  const onWorkItemSaved = (workItem: WorkItem) => {
+    const index = workItems.findIndex((item) => item.id === workItem.id);
+    const items = workItems;
+
+    if (index !== -1) {
+      items[index] = workItem;
+    } else {
+      items.push(workItem);
+    }
+
+    setWorkItems(items);
+  };
 
   return (
     <Container maxW="">
@@ -53,6 +66,7 @@ function Board() {
       <EditWorkItemModal
         workItemType="FEATURE"
         isOpen={isEditItemOpen}
+        onWorkItemSaved={onWorkItemSaved}
         onClose={onCloseEditItem}
       />
     </Container>
