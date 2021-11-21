@@ -17,7 +17,6 @@ import {
   NumberIncrementStepper,
   NumberInputField,
   NumberInputStepper,
-  FormErrorMessage,
   FormHelperText,
   useToast
 } from '@chakra-ui/react';
@@ -59,6 +58,7 @@ function EditWorkItemModal({
         status: values.status,
         type: workItemType,
       }
+
       WorkitemService.createWorkItem(organization?.id!, newWorkItem)
         .then((item) => {
           toastDescription = `${getNiceItemType()} "${item.name}" successfully created.`;
@@ -104,49 +104,51 @@ function EditWorkItemModal({
                 placeholder="Name"
                 value={values.name}
               />
-              <FormErrorMessage>test</FormErrorMessage>
             </FormControl>
             <br/>
-            <FormControl isRequired>
-              <FormLabel htmlFor="status">Status</FormLabel>
-              <Select
-                onChange={handleChange}
-                onBlur={handleBlur}
-                defaultValue="BACKLOG"
-                name="status"
-                id="status"
-                value={values.status}
-              >
-                <option value="BACKLOG">Backlog</option>
-                <option value="READY">Ready</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="VERIFY">Verify</option>
-                <option value="DONE">Done</option>
-              </Select>
-              <FormErrorMessage>test</FormErrorMessage>
-            </FormControl>
-            <br/>
-            <FormControl>
-              <FormLabel>Priority</FormLabel>
-              <NumberInput
-                onChange={priority => setPriority(parseInt(priority, 10))}
-                onBlur={handleBlur}
-                id="priority"
-                name="priority"
-                defaultValue={1}
-                max={10}
-                min={1}
-                value={itemPriority}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <FormHelperText>Lower number signifies a higher priority</FormHelperText>
-            </FormControl>
-            <br/>
+            { workItemType !== 'FEATURE' && <>
+              <FormControl isRequired>
+                <FormLabel htmlFor="status">Status</FormLabel>
+                <Select
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  defaultValue="BACKLOG"
+                  name="status"
+                  id="status"
+                  value={values.status}
+                >
+                  <option value="BACKLOG">Backlog</option>
+                  <option value="READY">Ready</option>
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="VERIFY">Verify</option>
+                  <option value="DONE">Done</option>
+                </Select>
+              </FormControl>
+              <br/>
+              <FormControl>
+                <FormLabel>Priority</FormLabel>
+                <NumberInput
+                  onChange={priority => setPriority(parseInt(priority, 10))}
+                  onBlur={handleBlur}
+                  id="priority"
+                  name="priority"
+                  defaultValue={1}
+                  max={10}
+                  min={1}
+                  value={itemPriority}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+                <FormHelperText>Lower number signifies a higher priority</FormHelperText>
+              </FormControl>
+              <br/>
+              </>
+            }
+
             <FormControl id="description">
               <FormLabel>Description</FormLabel>
               <Textarea

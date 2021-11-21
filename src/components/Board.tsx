@@ -43,8 +43,8 @@ function Board() {
         ))}
       </Accordion>
       <Flex flexDirection="row-reverse" pt={25}>
-        <ButtonGroup size="md" isAttached variant="outline">
-          <Button mr="-px" onClick={onOpenEditItem}>
+        <ButtonGroup size="md" isAttached variant="outline" onClick={onOpenEditItem}>
+          <Button mr="-px">
             New {parentView.charAt(0) + parentView.slice(1).toLowerCase()}
           </Button>
           <IconButton aria-label="Add Feature" icon={<BiPlus />} />

@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
+  Button,
   Editable,
   EditableInput,
   EditablePreview,
@@ -13,12 +14,14 @@ import {
   IconButton,
   useEditableControls,
   useToast,
-  UseToastOptions
+  UseToastOptions,
+  useDisclosure
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { BiCheck, BiX, BiEdit } from 'react-icons/bi';
+import { BiCheck, BiX, BiEdit, BiPlus } from 'react-icons/bi';
 import Board from 'react-trello';
 import buildBoardData from '../helpers/board.helper';
+import EditWorkItemModal from './EditWorkItemModal';
 import WorkitemService, { WorkItem } from '../services/workitem.service';
 
 function EditableControls() {
@@ -56,12 +59,19 @@ function EditableControls() {
 function BoardSwimlane({ parent }: { parent: WorkItem }) {
   const [children, setChildren] = useState<Array<WorkItem>>([]);
   const toast = useToast();
-  
+  const {
+    isOpen: isEditItemOpen,
+    onOpen: onOpenEditItem,
+    onClose: onCloseEditItem,
+  } = useDisclosure();
+
   useEffect(() => {
     if( parent.organizationId ){
       WorkitemService.getWorkItems(parent.organizationId, {
         parentId: parent.id,
-      }).then(setChildren);
+      }).then((data) => {
+        setChildren(data);
+      });
     }
   }, []);
 
@@ -112,9 +122,9 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
                     title: 'Work item modified',
                   };
 
-                  /* eslint-disable no-param-reassign */
-                  parent.name = newName;
-                  WorkitemService.updateWorkItem(parent.organizationId, parent.id, parent)
+                  WorkitemService.updateWorkItem(parent.organizationId, parent.id, {
+                    name: newName
+                  })
                   .then(() => {
                     toastData.description = `Feature name changed to: "${newName}".`;
                   })
@@ -148,6 +158,19 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
           style={{ backgroundColor: 'white', height: 'auto' }}
           data={getBoardData()}
           handleDragEnd={handleCardMove}
+        />
+        <Flex justifyContent='flex-end'>
+          <ButtonGroup size="md" isAttached variant="outline" onClick={onOpenEditItem}>
+            <Button mr="-px">
+              Add Story
+            </Button>
+            <IconButton aria-label="Add Story" icon={<BiPlus />} />
+          </ButtonGroup>
+        </Flex>
+        <EditWorkItemModal
+          workItemType="STORY"
+          isOpen={isEditItemOpen}
+          onClose={onCloseEditItem}
         />
       </AccordionPanel>
     </AccordionItem>
