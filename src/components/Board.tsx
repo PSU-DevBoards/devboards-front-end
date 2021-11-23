@@ -1,21 +1,19 @@
 import {
   Accordion,
   Button,
-  ButtonGroup,
   Container,
   Flex,
-  IconButton,
   useDisclosure,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { BiPlus } from 'react-icons/bi';
-import BoardSwimlane from './BoardSwimlane';
-import EditWorkItemModal from './EditWorkItemModal';
+import { useOrganization } from '../contexts/organization-context';
 import WorkitemService, {
   WorkItem,
   WorkItemType,
 } from '../services/workitem.service';
-import { useOrganization } from '../contexts/organization-context';
+import BoardSwimlane from './BoardSwimlane';
+import EditWorkItemModal from './EditWorkItemModal';
 
 function Board() {
   const { organization } = useOrganization();
@@ -56,12 +54,13 @@ function Board() {
         ))}
       </Accordion>
       <Flex flexDirection="row-reverse" pt={25}>
-        <ButtonGroup size="md" isAttached variant="outline" onClick={onOpenEditItem}>
-          <Button mr="-px">
-            New {parentView.charAt(0) + parentView.slice(1).toLowerCase()}
-          </Button>
-          <IconButton aria-label="Add Feature" icon={<BiPlus />} />
-        </ButtonGroup>
+        <Button
+          variant="outline"
+          onClick={onOpenEditItem}
+          rightIcon={<BiPlus />}
+        >
+          New {parentView.charAt(0) + parentView.slice(1).toLowerCase()}
+        </Button>
       </Flex>
       <EditWorkItemModal
         workItemType="FEATURE"

@@ -1,28 +1,31 @@
 import {
   AccordionButton,
-  Text,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
   Box,
   Button,
+  ButtonGroup,
   Editable,
   EditableInput,
   EditablePreview,
   Flex,
-  ButtonGroup,
   IconButton,
+  Text,
+  useDisclosure,
   useEditableControls,
   useToast,
   UseToastOptions,
-  useDisclosure
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
-import { BiCheck, BiX, BiEdit, BiPlus } from 'react-icons/bi';
+import { BiCheck, BiEdit, BiPlus, BiX } from 'react-icons/bi';
 import Board from 'react-trello';
 import buildBoardData from '../helpers/board.helper';
+import WorkitemService, {
+  WorkItem,
+  WorkItemStatus,
+} from '../services/workitem.service';
 import EditWorkItemModal from './EditWorkItemModal';
-import WorkitemService, { WorkItem, WorkItemStatus } from '../services/workitem.service';
 
 function EditableControls() {
   const {
@@ -66,30 +69,66 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
   } = useDisclosure();
 
   useEffect(() => {
-    if( parent.organizationId ){
+    if (parent.organizationId)
       WorkitemService.getWorkItems(parent.organizationId, {
         parentId: parent.id,
-      }).then((data) => {
-        setChildren(data);
-      });
-    }
+      }).then(setChildren);
   }, []);
 
   const getBoardData = useCallback(() => buildBoardData(children), [children]);
 
-  const handleCardMove = (cardId: string, fromLaneId: string, toLaneId: string, addedIndex: number) => {
-    if( fromLaneId === toLaneId ) return;
+  const handleCardMove = (
+    cardId: string,
+    fromLaneId: string,
+    toLaneId: string
+  ) => {
+    if (fromLaneId !== toLaneId) {
+      const itemId = parseInt(cardId, 10);
 
-    WorkitemService.updateWorkItem(parent.organizationId, parseInt(cardId, 10), {
-      status: toLaneId as WorkItemStatus
-    });
+      WorkitemService.updateWorkItem(parent.organizationId, itemId, {
+        status: toLaneId as WorkItemStatus,
+      }).then(() => {
+        setChildren(
+          children.map((item) =>
+            item.id === itemId
+              ? { ...item, status: toLaneId as WorkItemStatus }
+              : item
+          )
+        );
+      });
+    }
+  };
 
-    console.log(`${cardId} ${fromLaneId} ${toLaneId} ${addedIndex}`);
-    
-  }
+  const onWorkItemSaved = (workItem: WorkItem) => {
+    setChildren([...children, workItem]);
+  };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onWorkItemSaved = (workItem: WorkItem) => { }
+  const onSubmitEditable = (name: string) => {
+    const toastData: UseToastOptions = {
+      position: 'bottom-right',
+      status: 'success',
+      title: 'Work item modified',
+    };
+
+    WorkitemService.updateWorkItem(parent.organizationId, parent.id, {
+      name,
+    })
+      .then(() => {
+        toastData.description = `Feature name changed to: "${name}".`;
+      })
+      .catch((err) => {
+        toastData.status = 'error';
+        toastData.description = 'Feature modifications failed!';
+
+        if (err.errors) {
+          const [errorMessages] = err.errors;
+          toastData.description = errorMessages;
+        }
+      })
+      .finally(() => {
+        toast(toastData);
+      });
+  };
 
   return (
     <AccordionItem>
@@ -113,32 +152,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
-                onSubmit={(newName) => {
-                  const toastData: UseToastOptions = {
-                    position: 'bottom-right',
-                    status: 'success',
-                    title: 'Work item modified',
-                  };
-
-                  WorkitemService.updateWorkItem(parent.organizationId, parent.id, {
-                    name: newName
-                  })
-                  .then(() => {
-                    toastData.description = `Feature name changed to: "${newName}".`;
-                  })
-                  .catch((err) => {
-                    toastData.status = 'error';
-                    toastData.description = "Feature modifications failed!";
-
-                    if( err.errors ){
-                      const [errorMessages] = err.errors;
-                      toastData.description = errorMessages;
-                    }
-                  })
-                  .finally(() => {
-                    toast(toastData);
-                  });
-                }}
+                onSubmit={onSubmitEditable}
               >
                 <Flex alignItems="center">
                   <EditablePreview />
@@ -157,13 +171,14 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
           data={getBoardData()}
           handleDragEnd={handleCardMove}
         />
-        <Flex justifyContent='flex-end'>
-          <ButtonGroup size="md" isAttached variant="outline" onClick={onOpenEditItem}>
-            <Button mr="-px">
-              Add Story
-            </Button>
-            <IconButton aria-label="Add Story" icon={<BiPlus />} />
-          </ButtonGroup>
+        <Flex justifyContent="flex-end">
+          <Button
+            variant="outline"
+            onClick={onOpenEditItem}
+            rightIcon={<BiPlus />}
+          >
+            Add Story
+          </Button>
         </Flex>
         <EditWorkItemModal
           workItemType="STORY"
