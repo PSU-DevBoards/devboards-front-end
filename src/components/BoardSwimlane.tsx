@@ -17,12 +17,12 @@ import {
   UseToastOptions,
   useDisclosure
 } from '@chakra-ui/react';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BiCheck, BiX, BiEdit, BiPlus } from 'react-icons/bi';
 import Board from 'react-trello';
 import buildBoardData from '../helpers/board.helper';
 import EditWorkItemModal from './EditWorkItemModal';
-import WorkitemService, { WorkItem } from '../services/workitem.service';
+import WorkitemService, { WorkItem, WorkItemStatus } from '../services/workitem.service';
 
 function EditableControls() {
   const {
@@ -80,15 +80,10 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
   const handleCardMove = (cardId: string, fromLaneId: string, toLaneId: string, addedIndex: number) => {
     if( fromLaneId === toLaneId ) return;
 
-    /* TODO: Write code for updating work item status 
-    const newData : WorkItem = {
-      name: "",
-      id: "",
-      status: toLaneId as WorkItemStatus,
-      priority: 1,
-    }
-    WorkitemService.updateWorkItem(parent.organizationId, parseInt(cardId), newData);
-    */
+    WorkitemService.updateWorkItem(parent.organizationId, parseInt(cardId, 10), {
+      status: toLaneId as WorkItemStatus
+    });
+
     console.log(`${cardId} ${fromLaneId} ${toLaneId} ${addedIndex}`);
     
   }

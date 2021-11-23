@@ -35,7 +35,7 @@ class WorkItemService extends DbApiService {
   public async updateWorkItem(
     orgId: number,
     workItemId: number,
-    workItem: Pick<WorkItem, 'name'>
+    workItem: Partial<Pick<WorkItem, 'name' | 'status'>>
   ): Promise<WorkItem> {
     return this.patch(
       `/organizations/${orgId}/work-items/${workItemId}`,

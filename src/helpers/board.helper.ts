@@ -5,7 +5,7 @@ const BASE_BOARD_DATA: ReactTrello.BoardData = {
     {
       id: 'BACKLOG',
       title: 'Backlog',
-      label: '2/2',
+      label: '0/0',
       status: 'BACKLOG',
       cards: [],
     },
