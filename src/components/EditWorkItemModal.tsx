@@ -34,12 +34,14 @@ function EditWorkItemModal({
   onWorkItemSaved,
   workItemType,
   workItem,
+  parentId
 }: {
   isOpen: boolean;
   onClose: () => void;
   onWorkItemSaved: (workItem: WorkItem) => void;
   workItemType: WorkItemType;
   workItem?: WorkItem;
+  parentId?: number;
 }) {
   const { organization } = useOrganization();
   const [itemPriority, setPriority] = useState(0);
@@ -55,13 +57,14 @@ function EditWorkItemModal({
     let toastTitle = `${getNiceItemType()} created.`;
     let toastDescription = '';
     let toastStatus = 'success';
-
+    
     const newWorkItem = {
       name: values.name,
       priority: itemPriority,
       description: values.description,
       status: values.status,
       type: workItemType,
+      parentId,
     };
     WorkitemService.createWorkItem(organization?.id!, newWorkItem)
       .then((item) => {

@@ -175,6 +175,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
           isOpen={isEditItemOpen}
           onWorkItemSaved={onWorkItemSaved}
           onClose={onCloseEditItem}
+          parentId={parent.id}
         />
       </AccordionPanel>
     </AccordionItem>
