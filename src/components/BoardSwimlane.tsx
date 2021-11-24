@@ -69,14 +69,15 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
   } = useDisclosure();
 
   useEffect(() => {
-    if (parent.organizationId)
-      WorkitemService.getWorkItems(parent.organizationId, {
-        parentId: parent.id,
-      }).then(setChildren);
+    WorkitemService.getWorkItems(parent.organizationId, {
+      parentId: parent.id,
+    }).then(setChildren);
   }, []);
 
   const getBoardData = useCallback(() => buildBoardData(children), [children]);
 
+  // TODO: Find a proper way to test this
+  /* istanbul ignore next */
   const handleCardMove = (
     cardId: string,
     fromLaneId: string,
@@ -118,7 +119,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
       })
       .catch((err) => {
         toastData.status = 'error';
-        toastData.description = 'Feature modifications failed!';
+        toastData.title = 'Feature modifications failed!';
 
         if (err.errors) {
           const [errorMessages] = err.errors;
@@ -131,7 +132,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
   };
 
   return (
-    <AccordionItem>
+    <AccordionItem data-testid={`swimlane-${parent.id}`}>
       <h2>
         <AccordionButton as="div">
           <Box flex="1" textAlign="left">

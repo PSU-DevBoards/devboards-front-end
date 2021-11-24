@@ -34,16 +34,7 @@ function Board() {
   }, [organization]);
 
   const onWorkItemSaved = (workItem: WorkItem) => {
-    const index = workItems.findIndex((item) => item.id === workItem.id);
-    const items = workItems;
-
-    if (index !== -1) {
-      items[index] = workItem;
-    } else {
-      items.push(workItem);
-    }
-
-    setWorkItems(items);
+    setWorkItems([...workItems, workItem]);
   };
 
   return (
@@ -58,6 +49,7 @@ function Board() {
           variant="outline"
           onClick={onOpenEditItem}
           rightIcon={<BiPlus />}
+          aria-label="New Workitem"
         >
           New {parentView.charAt(0) + parentView.slice(1).toLowerCase()}
         </Button>

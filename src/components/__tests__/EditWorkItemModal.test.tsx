@@ -10,20 +10,23 @@ jest.mock('../../services/workitem.service');
 const useOrganizationMock: jest.Mock = useOrganization as any;
 
 describe('EditWorkItemModal', () => {
-  let createWorkItemSpy: jest.SpyInstance<Promise<WorkItem>, [orgId: number, workItem: Pick<WorkItem, "name">]>;
-  let mockWorkItem : WorkItem;
-  let workItemSaved = jest.fn();
-  let onClose = jest.fn();
+  let createWorkItemSpy: jest.SpyInstance<
+    Promise<WorkItem>,
+    [orgId: number, workItem: Pick<WorkItem, 'name'>]
+  >;
+  let mockWorkItem: WorkItem;
+  const workItemSaved = jest.fn();
+  const onClose = jest.fn();
 
   beforeAll(() => {
     mockWorkItem = {
       id: 1,
       organizationId: 1,
-      name: "test feature",
+      name: 'test feature',
       priority: 1,
-      description: "",
-      status: "IN_PROGRESS",
-      type: "FEATURE",
+      description: '',
+      status: 'IN_PROGRESS',
+      type: 'FEATURE',
     };
 
     workItemSaved.mockReturnValue(mockWorkItem);
@@ -35,44 +38,51 @@ describe('EditWorkItemModal', () => {
       organization: { id: 1, name: 'testOrg' },
     });
 
-    createWorkItemSpy = jest.spyOn(
-      WorkitemService,
-      'createWorkItem'
-    );
-    
+    createWorkItemSpy = jest.spyOn(WorkitemService, 'createWorkItem');
+
     createWorkItemSpy.mockResolvedValue(mockWorkItem);
   });
 
   test('Modal title is derived from work item ID when one is passed', async () => {
-    render(<EditWorkItemModal
+    render(
+      <EditWorkItemModal
         workItemType="FEATURE"
-        isOpen={true}
+        isOpen
         onWorkItemSaved={workItemSaved}
         onClose={onClose}
         workItem={mockWorkItem}
-    />);
+      />
+    );
 
-    expect(screen.getByLabelText('Edit Work Item Header')).toHaveTextContent('Edit F-1');
+    expect(screen.getByLabelText('Edit Work Item Header')).toHaveTextContent(
+      'Edit F-1'
+    );
   });
 
   test('Modal title is derived from work item type when one is not passed', async () => {
-    render(<EditWorkItemModal
+    render(
+      <EditWorkItemModal
         workItemType="FEATURE"
-        isOpen={true}
+        isOpen
         onWorkItemSaved={workItemSaved}
         onClose={onClose}
-    />);
+      />
+    );
 
-    expect(screen.getByLabelText('Edit Work Item Header')).toHaveTextContent('New Feature');
+    expect(screen.getByLabelText('Edit Work Item Header')).toHaveTextContent(
+      'New Feature'
+    );
   });
 
   test('submits a post work item request for feature', async () => {
-    render(<EditWorkItemModal
-      workItemType="FEATURE"
-      isOpen={true}
-      onWorkItemSaved={workItemSaved}
-      onClose={onClose}
-    />);
+    render(
+      <EditWorkItemModal
+        workItemType="FEATURE"
+        isOpen
+        onWorkItemSaved={workItemSaved}
+        onClose={onClose}
+      />
+    );
 
     const nameInput = screen.getByPlaceholderText('Name');
     fireEvent.change(nameInput, { target: { value: 'test feature' } });
@@ -90,15 +100,48 @@ describe('EditWorkItemModal', () => {
     });
   });
 
-  test('displays a failure message when work item creation fails to complete', async () => {
-    createWorkItemSpy.mockImplementationOnce(() => Promise.reject(new Error('Failure.')));
+  test('submits a post work item request for story', async () => {
+    render(
+      <EditWorkItemModal
+        workItemType="STORY"
+        isOpen
+        onWorkItemSaved={workItemSaved}
+        onClose={onClose}
+      />
+    );
 
-    render(<EditWorkItemModal
-      workItemType="FEATURE"
-      isOpen={true}
-      onWorkItemSaved={workItemSaved}
-      onClose={onClose}
-    />);
+    const nameInput = screen.getByPlaceholderText('Name');
+    fireEvent.change(nameInput, { target: { value: 'test feature' } });
+
+    const descInput = screen.getByPlaceholderText('Description');
+    fireEvent.change(descInput, { target: { value: 'description' } });
+
+    const priorityInput = screen.getByLabelText('Priority Input');
+    fireEvent.change(priorityInput, { target: { value: 2 } });
+
+    const create = screen.getByText('Create');
+    fireEvent.click(create);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(`Story "test feature" successfully created.`)
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('displays a failure message when work item creation fails to complete', async () => {
+    createWorkItemSpy.mockImplementationOnce(() =>
+      Promise.reject(new Error('Failure.'))
+    );
+
+    render(
+      <EditWorkItemModal
+        workItemType="FEATURE"
+        isOpen
+        onWorkItemSaved={workItemSaved}
+        onClose={onClose}
+      />
+    );
 
     const nameInput = screen.getByPlaceholderText('Name');
     fireEvent.change(nameInput, { target: { value: 'test feature' } });
@@ -111,7 +154,9 @@ describe('EditWorkItemModal', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByText('Error creating Feature "test feature", try again later')
+        screen.getByText(
+          'Error creating Feature "test feature", try again later'
+        )
       ).toBeInTheDocument()
     );
   });

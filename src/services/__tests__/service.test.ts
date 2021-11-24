@@ -26,6 +26,12 @@ describe('service', () => {
     expect(service.get('/')).resolves.toEqual('text');
   });
 
+  test('get adds query params', () => {
+    service.get('/', { test: 1 });
+
+    expect(global.fetch).toHaveBeenCalledWith('/?test=1', expect.anything());
+  });
+
   test('get rejects on request failure', () => {
     expect(service.get('/')).rejects.toEqual(response);
   });
