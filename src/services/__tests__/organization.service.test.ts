@@ -83,7 +83,7 @@ describe('organizationService', () => {
     );
   });
 
-  it('creates a post organization request', async () => {
+  it('create organization', async () => {
     const name = 'testOrg';
     const organization = {
       id: 0,
