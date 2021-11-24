@@ -34,7 +34,7 @@ function EditWorkItemModal({
   onWorkItemSaved,
   workItemType,
   workItem,
-  parentId
+  parentId,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -53,19 +53,24 @@ function EditWorkItemModal({
   const getModalTitle = () =>
     workItem ? `Edit F-${workItem.id}` : `New ${getNiceItemType()}`;
 
-  const onSubmitForm = (values: Record<string, string>) => {
+  const onSubmitForm = ({
+    name,
+    description,
+    status,
+  }: Record<string, string>) => {
     let toastTitle = `${getNiceItemType()} created.`;
     let toastDescription = '';
     let toastStatus = 'success';
-    
+
     const newWorkItem = {
-      name: values.name,
+      name,
       priority: itemPriority,
-      description: values.description,
-      status: values.status,
+      description,
+      status,
       type: workItemType,
       parentId,
     };
+
     WorkitemService.createWorkItem(organization?.id!, newWorkItem)
       .then((item) => {
         toastDescription = `${getNiceItemType()} "${
@@ -76,9 +81,7 @@ function EditWorkItemModal({
       })
       .catch(() => {
         toastTitle = `${getNiceItemType()} creation failed.`;
-        toastDescription = `Error creating ${getNiceItemType()} "${
-          values.name
-        }", try again later`;
+        toastDescription = `Error creating ${getNiceItemType()} "${name}", try again later`;
         toastStatus = 'error';
       })
       .finally(() => {
@@ -90,6 +93,7 @@ function EditWorkItemModal({
           duration: 5000,
           isClosable: false,
         });
+
         onClose();
       });
   };
@@ -119,51 +123,52 @@ function EditWorkItemModal({
               />
             </FormControl>
             <br />
-            { workItemType !== 'FEATURE' && <>
-              <FormControl isRequired>
-                <FormLabel htmlFor="status">Status</FormLabel>
-                <Select
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  defaultValue="BACKLOG"
-                  name="status"
-                  id="status"
-                  value={values.status}
-                >
-                  <option value="BACKLOG">Backlog</option>
-                  <option value="READY">Ready</option>
-                  <option value="IN_PROGRESS">In Progress</option>
-                  <option value="VERIFY">Verify</option>
-                  <option value="DONE">Done</option>
-                </Select>
-              </FormControl>
-              <br />
-              <FormControl>
-                <FormLabel>Priority</FormLabel>
-                <NumberInput
-                  onChange={(priority) => setPriority(parseInt(priority, 10))}
-                  onBlur={handleBlur}
-                  id="priority"
-                  name="priority"
-                  defaultValue={1}
-                  max={10}
-                  min={1}
-                  value={itemPriority}
-                  aria-label="Priority Input"
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper aria-label="Priority Increment" />
-                    <NumberDecrementStepper aria-label="Priority Decrement" />
-                  </NumberInputStepper>
-                </NumberInput>
-                <FormHelperText>
-                  Lower number signifies a higher priority
-                </FormHelperText>
-              </FormControl>
-              <br />
+            {workItemType !== 'FEATURE' && (
+              <>
+                <FormControl isRequired>
+                  <FormLabel htmlFor="status">Status</FormLabel>
+                  <Select
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    defaultValue="BACKLOG"
+                    name="status"
+                    id="status"
+                    value={values.status}
+                  >
+                    <option value="BACKLOG">Backlog</option>
+                    <option value="READY">Ready</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="VERIFY">Verify</option>
+                    <option value="DONE">Done</option>
+                  </Select>
+                </FormControl>
+                <br />
+                <FormControl>
+                  <FormLabel>Priority</FormLabel>
+                  <NumberInput
+                    onChange={(priority) => setPriority(parseInt(priority, 10))}
+                    onBlur={handleBlur}
+                    id="priority"
+                    name="priority"
+                    defaultValue={1}
+                    max={10}
+                    min={1}
+                    value={itemPriority}
+                    aria-label="Priority Input"
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper aria-label="Priority Increment" />
+                      <NumberDecrementStepper aria-label="Priority Decrement" />
+                    </NumberInputStepper>
+                  </NumberInput>
+                  <FormHelperText>
+                    Lower number signifies a higher priority
+                  </FormHelperText>
+                </FormControl>
+                <br />
               </>
-            }
+            )}
 
             <FormControl id="description">
               <FormLabel>Description</FormLabel>
