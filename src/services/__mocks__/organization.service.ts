@@ -19,9 +19,9 @@ const OrganizationService = {
     }),
   inviteUser: () =>
     Promise.resolve({
-      organization_id: 1,
-      user_id: 1,
-      role_id: 2,
+      organizationId: 1,
+      userId: 1,
+      roleId: 2,
     }),
   deleteOrganization: () => Promise.resolve(''),
   getCurrentUserOrganizations: () =>

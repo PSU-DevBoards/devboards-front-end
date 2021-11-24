@@ -132,10 +132,10 @@ const UsersTable = () => {
       </Thead>
       <Tbody>
         {orgUsers.map((orgUser) => (
-          <Tr key={orgUser.user_id}>
-            <Td>{orgUser.organization_id}</Td>
-            <Td>{orgUser.role_id}</Td>
-            <Td isNumeric>{orgUser.user_id}</Td>
+          <Tr key={orgUser.userId}>
+            <Td>{orgUser.organizationId}</Td>
+            <Td>{orgUser.roleId}</Td>
+            <Td isNumeric>{orgUser.userId}</Td>
           </Tr>
         ))}
       </Tbody>
@@ -155,7 +155,7 @@ function EditOrganization() {
             position: 'bottom-right',
             status: 'success',
             title: 'Invitation Sent',
-            description: `User ${email} (${data.user_id}) invited successfully!`,
+            description: `User ${email} (${data.userId}) invited successfully!`,
         });
         onClose();
       }).catch(() => {

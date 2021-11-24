@@ -14,7 +14,9 @@ function Dashboard() {
   return (
     <>
       {organizations?.length > 0 ? (
-        <p>Welcome to the dashboard!</p>
+        <>
+          <p>Board Moved to OrganizationBoard.tsx</p>
+        </>
       ) : (
         <NoOrganization />
       )}

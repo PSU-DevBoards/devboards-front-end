@@ -8,9 +8,9 @@ export type Organization = {
 };
 
 export type OrganizationUser = {
-  organization_id: number;
-  user_id: number;
-  role_id: string;
+  organizationId: number;
+  userId: number;
+  roleId: string;
 };
 
 class OrganizationService extends DbApiService {
@@ -31,9 +31,9 @@ class OrganizationService extends DbApiService {
   public async inviteUser(
     id: number,
     email: string,
-    role_id: number
+    roleId: number
   ): Promise<OrganizationUser> {
-    return this.post(`/organizations/${id}/users`, { email, role_id });
+    return this.post(`/organizations/${id}/users`, { email, roleId });
   }
 
   public async updateOrganization(

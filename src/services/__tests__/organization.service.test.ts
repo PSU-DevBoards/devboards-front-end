@@ -58,7 +58,7 @@ describe('organizationService', () => {
 
   it('gets organization user by id', async () => {
     const organizationUsers = [
-      { organization_id: 1, user_id: 1, role_id: null },
+      { organizationId: 1, userId: 1, roleId: null },
     ];
     const requestHeader: HeadersInit = new Headers();
     requestHeader.set('Content-Type', 'application/json');
@@ -83,7 +83,7 @@ describe('organizationService', () => {
     );
   });
 
-  it('creates a post organization request', async () => {
+  it('create organization', async () => {
     const name = 'testOrg';
     const organization = {
       id: 0,
@@ -192,7 +192,7 @@ describe('organizationService', () => {
         },
         body: JSON.stringify({
           email: 'test@test.com',
-          role_id: 1,
+          roleId: 1,
         }),
       })
     );
