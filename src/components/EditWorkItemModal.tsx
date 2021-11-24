@@ -103,7 +103,7 @@ function EditWorkItemModal({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{getModalTitle()}</ModalHeader>
+        <ModalHeader aria-label="Edit Work Item Header">{getModalTitle()}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <form id="create_feature_form" onSubmit={handleSubmit}>
@@ -149,11 +149,12 @@ function EditWorkItemModal({
                   max={10}
                   min={1}
                   value={itemPriority}
+                  aria-label="Priority Input"
                 >
                   <NumberInputField />
                   <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
+                    <NumberIncrementStepper aria-label="Priority Increment" />
+                    <NumberDecrementStepper aria-label="Priority Decrement" />
                   </NumberInputStepper>
                 </NumberInput>
                 <FormHelperText>

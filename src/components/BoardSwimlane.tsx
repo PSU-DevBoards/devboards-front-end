@@ -35,12 +35,12 @@ function EditableControls() {
   return isEditing ? (
     <ButtonGroup size="sm">
       <IconButton
-        aria-label="Submit changes"
+        aria-label="Submit Changes"
         icon={<BiCheck />}
         {...getSubmitButtonProps()}
       />
       <IconButton
-        aria-label="Cancel changes"
+        aria-label="Cancel Changes"
         icon={<BiX />}
         {...getCancelButtonProps()}
       />
@@ -48,7 +48,7 @@ function EditableControls() {
   ) : (
     <IconButton
       marginLeft="10px"
-      aria-label="Edit feature name"
+      aria-label="Edit Feature Name"
       size="sm"
       icon={<BiEdit />}
       {...getEditButtonProps()}
@@ -83,9 +83,6 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
     WorkitemService.updateWorkItem(parent.organizationId, parseInt(cardId, 10), {
       status: toLaneId as WorkItemStatus
     });
-
-    console.log(`${cardId} ${fromLaneId} ${toLaneId} ${addedIndex}`);
-    
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -142,7 +139,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
               >
                 <Flex alignItems="center">
                   <EditablePreview />
-                  <EditableInput />
+                  <EditableInput aria-label="Feature Name" />
                   <EditableControls />
                 </Flex>
               </Editable>
