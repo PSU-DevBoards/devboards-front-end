@@ -169,11 +169,10 @@ describe('BoardSwimlane', () => {
     const submit = screen.getByLabelText('Submit');
     fireEvent.click(submit);
 
-    await waitFor(() => {
-      expect(
-        screen.getByText('Feature modifications failed!')
-      ).toBeInTheDocument();
-    });
+    const messages = await screen.findAllByText(
+      'Feature modifications failed!'
+    );
+    expect(messages.length).toBeGreaterThan(0);
   });
 
   test('moving card to same lane does nothing', async () => {
