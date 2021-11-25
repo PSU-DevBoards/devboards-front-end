@@ -178,11 +178,11 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
             onClick={onOpenEditItem}
             rightIcon={<BiPlus />}
           >
-            Add Story
+            Add {parent.type === 'FEATURE' ? 'Story' : 'Task'}
           </Button>
         </Flex>
         <EditWorkItemModal
-          workItemType="STORY"
+          workItemType={parent.type === 'FEATURE' ? 'STORY' : 'TASK'}
           isOpen={isEditItemOpen}
           onWorkItemSaved={onWorkItemSaved}
           onClose={onCloseEditItem}
