@@ -200,4 +200,17 @@ describe('BoardSwimlane', () => {
 
     await waitFor(() => expect(updateWorkItemSpy).toBeCalledTimes(0));
   });
+
+  test('displays add task button when parent is story', () => {
+    render(
+      <Accordion>
+        <BoardSwimlane
+          key={mockWorkItem.id}
+          parent={{ ...mockWorkItem, type: 'STORY' }}
+        />
+      </Accordion>
+    );
+
+    expect(screen.getByText('Add Task')).toBeInTheDocument();
+  });
 });
