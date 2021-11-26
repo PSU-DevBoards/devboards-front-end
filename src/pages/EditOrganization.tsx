@@ -121,6 +121,12 @@ const UsersTable = () => {
     .catch(() => history.push('/dashboard'));
   }, []);
 
+  const onClickRemoveUser = (removedUser:OrganizationUser) =>
+  {
+    OrganizationService.deleteOrganizationUser(removedUser.organizationId,removedUser.userId);
+    window.location.reload();
+  }
+
   return (
     <Table variant="simple" title="Users">
       <Thead>
@@ -128,6 +134,7 @@ const UsersTable = () => {
           <Th>Organization ID</Th>
           <Th>Role ID</Th>
           <Th isNumeric>User ID</Th>
+          <Th> Options </Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -136,6 +143,19 @@ const UsersTable = () => {
             <Td>{orgUser.organizationId}</Td>
             <Td>{orgUser.roleId}</Td>
             <Td isNumeric>{orgUser.userId}</Td>
+            <Td>
+              <Flex justifyContent = "flex-end">
+                <Button colorScheme = "green">
+                  Confirm Change
+                </Button>
+                {
+                  orgUser.userId !== 1 && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
+                    Remove User
+                  </Button>
+                }
+
+              </Flex>
+            </Td>
           </Tr>
         ))}
       </Tbody>
