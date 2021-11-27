@@ -35,6 +35,7 @@ import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import Section from '../components/Section';
 import { useOrganization } from '../contexts/organization-context';
+import { useUser } from '../contexts/user-context'
 import OrganizationService, {
   OrganizationUser,
 } from '../services/organization.service';
@@ -42,6 +43,7 @@ import OrganizationService, {
 const OrganizationForm = () => {
   const toast = useToast();
   const { organization, setOrganization } = useOrganization();
+  const {currentUser, setCurrentUser} = useUser();
 
   const onSubmitForm = ({ name }: { name: string }) => {
     if (organization)
@@ -124,7 +126,6 @@ const UsersTable = () => {
   const onClickRemoveUser = (removedUser:OrganizationUser) =>
   {
     OrganizationService.deleteOrganizationUser(removedUser.organizationId,removedUser.userId);
-    window.location.reload();
   }
 
   return (
@@ -149,7 +150,7 @@ const UsersTable = () => {
                   Confirm Change
                 </Button>
                 {
-                  orgUser.userId !== 1 && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
+                  orgUser.userId !== currentUser.userId && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
                     Remove User
                   </Button>
                 }
