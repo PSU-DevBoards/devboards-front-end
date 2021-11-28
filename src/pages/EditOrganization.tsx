@@ -40,10 +40,10 @@ import OrganizationService, {
   OrganizationUser,
 } from '../services/organization.service';
 
+
 const OrganizationForm = () => {
   const toast = useToast();
   const { organization, setOrganization } = useOrganization();
-  const {currentUser, setCurrentUser} = useUser();
 
   const onSubmitForm = ({ name }: { name: string }) => {
     if (organization)
@@ -114,7 +114,7 @@ const UsersTable = () => {
   const [orgUsers, setOrgUsers] = useState<Array<OrganizationUser>>([]);
   const { orgId } = useParams<{ orgId: string }>();
   const history = useHistory();
-
+  const user = useUser();
   useEffect(() => {
     const id = parseInt(orgId, 10);
 
@@ -150,7 +150,7 @@ const UsersTable = () => {
                   Confirm Change
                 </Button>
                 {
-                  orgUser.userId !== currentUser.userId && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
+                  orgUser.userId !== user?.id && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
                     Remove User
                   </Button>
                 }
