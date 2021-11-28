@@ -15,6 +15,13 @@ jest.mock('../../services/organization.service', () => ({
   inviteUser: () =>
     Promise.resolve({ organizationId: 1, userId: 1, roleId: 2 }),
 }));
+jest.mock('../../services/role.service', () => ({
+  listRoles: () =>
+    Promise.resolve([
+      { id: 1, name: 'Developer' },
+      { id: 2, name: 'Scrum Master' },
+    ]),
+}));
 
 const useOrganizationMock: jest.Mock = useOrganization as any;
 const useParamsMock: jest.Mock = useParams as any;
