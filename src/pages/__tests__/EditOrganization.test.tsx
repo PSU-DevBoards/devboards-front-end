@@ -195,7 +195,7 @@ describe('EditOrganization', () => {
   });
 
       test('remove user',async () => {
-        useUserMock.mockReturnValue([{id:1}]);
+        useUserMock.mockReturnValue({id:1});
         getOrganizationUsersSpy.mockResolvedValue([{userId:1 },{userId:2,organizationId:1}])
             render(<EditOrganization />);
 
