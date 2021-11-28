@@ -20,12 +20,13 @@ import {
   FormHelperText,
   useToast,
   useDisclosure,
+  useControllableState
 } from '@chakra-ui/react';
 import { useFormik } from 'formik';
-import { useState } from 'react';
 import WorkitemService, {
   WorkItem,
   WorkItemType,
+  WorkItemStatus
 } from '../services/workitem.service';
 import { useOrganization } from '../contexts/organization-context';
 import DescriptionHelperModal from './DescriptionHelperModal';
@@ -46,7 +47,9 @@ function EditWorkItemModal({
   parentId?: number;
 }) {
   const { organization } = useOrganization();
-  const [itemPriority, setPriority] = useState(0);
+  const [itemPriority, setPriority] = useControllableState({
+    defaultValue: (workItem ? workItem.priority : 1)
+  });
   const toast = useToast();
   const {
     isOpen: isDescOpen,
@@ -65,10 +68,51 @@ function EditWorkItemModal({
     description,
     status,
   }: Record<string, string>) => {
-    let toastTitle = `${getNiceItemType()} created.`;
+    let toastTitle = `${getNiceItemType()} ${workItem ? 'modified' : 'created'}.`;
     let toastDescription = '';
     let toastStatus = 'success';
 
+    /* eslint-disable no-param-reassign */
+    if( workItem ){
+      workItem.name = name;
+      workItem.priority = itemPriority;
+      workItem.status = status as WorkItemStatus;
+      workItem.description = description;
+
+      WorkitemService.updateWorkItem(workItem.organizationId, workItem.id, {
+        name,
+        priority: itemPriority,
+        description,
+        status: status as WorkItemStatus,
+      })
+      .then(() => {
+        toastDescription = `${getNiceItemType()} "${
+          workItem.name
+        }" successfully modified.`;
+
+        onWorkItemSaved(workItem);
+      })
+      .catch(() => {
+        toastTitle = `${getNiceItemType()} editing failed.`;
+        toastDescription = `Error modifying ${getNiceItemType()} "${workItem.name}", try again later`;
+        toastStatus = 'error';
+      })
+      .finally(() => {
+        toast({
+          position: 'bottom-right',
+          title: toastTitle,
+          description: toastDescription,
+          status: toastStatus as any,
+          duration: 5000,
+          isClosable: false,
+        });
+
+        onClose();
+      });
+
+      return;
+    }
+    
     const newWorkItem = {
       name,
       priority: itemPriority,
@@ -107,7 +151,12 @@ function EditWorkItemModal({
 
   const { handleSubmit, handleChange, handleBlur, values, setFieldValue } =
     useFormik({
-      initialValues: { name: '', status: 'BACKLOG', description: '' },
+      enableReinitialize: true,
+      initialValues: {
+        name: (workItem ? workItem.name : ''),
+        status: (workItem ? workItem.status : 'BACKLOG'),
+        description: (workItem ? workItem.description! : ''),
+      },
       onSubmit: onSubmitForm,
     });
 
@@ -141,7 +190,6 @@ function EditWorkItemModal({
                     <Select
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      defaultValue="BACKLOG"
                       name="status"
                       id="status"
                       value={values.status}
@@ -163,10 +211,9 @@ function EditWorkItemModal({
                       onBlur={handleBlur}
                       id="priority"
                       name="priority"
-                      defaultValue={1}
                       max={10}
                       min={1}
-                      value={itemPriority}
+                      value={(workItem ? workItem.priority : itemPriority )}
                       aria-label="Priority Input"
                     >
                       <NumberInputField />
@@ -213,7 +260,7 @@ function EditWorkItemModal({
               type="submit"
               colorScheme="purple"
             >
-              Create
+              { workItem ? 'Edit' : 'Create' }
             </Button>
           </ModalFooter>
         </ModalContent>

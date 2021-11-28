@@ -61,7 +61,13 @@ function EditableControls() {
 
 function BoardSwimlane({ parent }: { parent: WorkItem }) {
   const [children, setChildren] = useState<Array<WorkItem>>([]);
+  const [activeWorkItem, setWorkItem] = useState({} as WorkItem);
   const toast = useToast();
+  const {
+    isOpen: isNewItemOpen,
+    onOpen: onOpenNewItem,
+    onClose: onCloseNewItem,
+  } = useDisclosure();
   const {
     isOpen: isEditItemOpen,
     onOpen: onOpenEditItem,
@@ -99,11 +105,19 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
       });
     }
   };
-
+  
   const onWorkItemSaved = (workItem: WorkItem) => {
     setChildren([...children, workItem]);
   };
 
+  const onCardEdit = (cardId: string) => {
+    WorkitemService.getWorkItem(parent.organizationId, parseInt(cardId, 10))
+    .then((workItem: WorkItem) => {
+      setWorkItem(workItem);
+      onOpenEditItem();
+    });
+  }
+  
   const onSubmitEditable = (name: string) => {
     const toastData: UseToastOptions = {
       position: 'bottom-right',
@@ -171,11 +185,12 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
           style={{ backgroundColor: 'white', height: 'auto' }}
           data={getBoardData()}
           handleDragEnd={handleCardMove}
+          onCardClick={onCardEdit}
         />
         <Flex justifyContent="flex-end">
           <Button
             variant="outline"
-            onClick={onOpenEditItem}
+            onClick={onOpenNewItem}
             rightIcon={<BiPlus />}
           >
             Add {parent.type === 'FEATURE' ? 'Story' : 'Task'}
@@ -183,10 +198,18 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
         </Flex>
         <EditWorkItemModal
           workItemType={parent.type === 'FEATURE' ? 'STORY' : 'TASK'}
+          isOpen={isNewItemOpen}
+          onWorkItemSaved={onWorkItemSaved}
+          onClose={onCloseNewItem}
+          parentId={parent.id}
+        />
+        <EditWorkItemModal
+          workItemType={parent.type === 'FEATURE' ? 'STORY' : 'TASK'}
           isOpen={isEditItemOpen}
           onWorkItemSaved={onWorkItemSaved}
           onClose={onCloseEditItem}
           parentId={parent.id}
+          workItem={activeWorkItem}
         />
       </AccordionPanel>
     </AccordionItem>
