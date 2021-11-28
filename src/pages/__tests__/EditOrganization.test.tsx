@@ -1,11 +1,15 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useParams, useHistory } from 'react-router';
 import { useOrganization } from '../../contexts/organization-context';
+import { useUser } from'../../contexts/user-context'
 import OrganizationService, {
   Organization,
   OrganizationUser,
 } from '../../services/organization.service';
 import EditOrganization from '../EditOrganization';
+import UserService, {
+  User,
+} from '../../services/user.service'
 
 jest.mock('../../contexts/organization-context');
 jest.mock('react-router');
@@ -15,11 +19,15 @@ jest.mock('../../services/organization.service', () => ({
   inviteUser: () => Promise.resolve({ organizationId: 1, userId: 1, roleId: 2 }),
   deleteOrganizationUser:() => Promise.resolve({})
 }));
-
+jest.mock('../../contexts/user-context')
+//jest.mock('../../services/user.service',()=>({
+    //User:() => Promise.resolve({id: 1},{username:"anon"})
+//}));
 const useOrganizationMock: jest.Mock = useOrganization as any;
 const useParamsMock: jest.Mock = useParams as any;
 const pushMock = jest.fn();
 const useHistoryMock: jest.Mock = useHistory as any;
+const useUserMock:jest.Mock = useUser as any;
 
 describe('EditOrganization', () => {
   let updateOrgSpy: jest.SpyInstance<
@@ -53,13 +61,14 @@ describe('EditOrganization', () => {
 
     useHistoryMock.mockReturnValue({ push: pushMock });
 
+
+
     updateOrgSpy = jest.spyOn(OrganizationService, 'updateOrganization');
     inviteUserSpy = jest.spyOn(OrganizationService, 'inviteUser');
     getOrganizationUsersSpy = jest.spyOn(OrganizationService, 'getOrganizationUsers');
     getOrganizationUsersSpy.mockResolvedValue([
       { userId: 1, organizationId: 1, roleId: 1 },]);
     deleteOrganizationUserSpy = jest.spyOn(OrganizationService, 'deleteOrganizationUser');
-
   });
 
   test('renders an input with the current organization name', async () => {
@@ -186,7 +195,7 @@ describe('EditOrganization', () => {
   });
 
       test('remove user',async () => {
-
+        useUserMock.mockReturnValue([{id:1}]);
         getOrganizationUsersSpy.mockResolvedValue([{userId:1 },{userId:2,organizationId:1}])
             render(<EditOrganization />);
 
