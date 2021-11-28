@@ -7,9 +7,6 @@ import OrganizationService, {
   OrganizationUser,
 } from '../../services/organization.service';
 import EditOrganization from '../EditOrganization';
-import UserService, {
-  User,
-} from '../../services/user.service'
 
 jest.mock('../../contexts/organization-context');
 jest.mock('react-router');
@@ -21,9 +18,6 @@ jest.mock('../../services/organization.service', () => ({
 }));
 
 jest.mock('../../contexts/user-context')
-//jest.mock('../../services/user.service',()=>({
-    //User:() => Promise.resolve({id: 1},{username:"anon"})
-//}));
 
 jest.mock('../../services/role.service', () => ({
   listRoles: () =>
