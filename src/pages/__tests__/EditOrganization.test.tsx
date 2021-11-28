@@ -80,6 +80,7 @@ describe('EditOrganization', () => {
     getOrganizationUsersSpy.mockResolvedValue([
       { userId: 1, organizationId: 1, roleId: 1 },]);
     deleteOrganizationUserSpy = jest.spyOn(OrganizationService, 'deleteOrganizationUser');
+    deleteOrganizationUserSpy.mockResolvedValue();
   });
 
   test('renders an input with the current organization name', async () => {
