@@ -160,4 +160,37 @@ describe('EditWorkItemModal', () => {
       ).toBeInTheDocument()
     );
   });
+
+  test('sets a description from the description helper', async () => {
+    render(
+      <EditWorkItemModal
+        workItemType="FEATURE"
+        isOpen
+        onWorkItemSaved={workItemSaved}
+        onClose={onClose}
+      />
+    );
+
+    const openDescHelperButton = screen.getByLabelText(
+      'open description helper'
+    );
+    fireEvent.click(openDescHelperButton);
+
+    await waitFor(() =>
+      expect(
+        screen.getByDisplayValue('I can accomplish my goal!')
+      ).toBeInTheDocument()
+    );
+
+    const submitDescButton = screen.getByLabelText('submit description');
+    fireEvent.click(submitDescButton);
+
+    await waitFor(() => {
+      expect(
+        screen.getByDisplayValue(
+          'As a user I want to do a thing so that I can accomplish my goal!'
+        )
+      ).toBeInTheDocument();
+    });
+  });
 });

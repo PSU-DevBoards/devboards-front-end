@@ -12,12 +12,13 @@ import WorkitemService, {
   WorkItem,
   WorkItemType,
 } from '../services/workitem.service';
+import BoardMenu from './BoardMenu';
 import BoardSwimlane from './BoardSwimlane';
 import EditWorkItemModal from './EditWorkItemModal';
 
 function Board() {
   const { organization } = useOrganization();
-  const [parentView] = useState<'FEATURE' | 'STORY'>('FEATURE');
+  const [parentView, setParentView] = useState<'FEATURE' | 'STORY'>('FEATURE');
   const [workItems, setWorkItems] = useState<Array<WorkItem>>([]);
   const {
     isOpen: isEditItemOpen,
@@ -31,7 +32,7 @@ function Board() {
         type: parentView as WorkItemType,
       }).then(setWorkItems);
     }
-  }, [organization]);
+  }, [organization, parentView]);
 
   const onWorkItemSaved = (workItem: WorkItem) => {
     setWorkItems([...workItems, workItem]);
@@ -39,6 +40,7 @@ function Board() {
 
   return (
     <Container maxW="">
+      <BoardMenu parentView={parentView} onSelectView={setParentView} />
       <Accordion defaultIndex={[0]} allowMultiple>
         {workItems.map((workItem) => (
           <BoardSwimlane key={workItem.id} parent={workItem} />
