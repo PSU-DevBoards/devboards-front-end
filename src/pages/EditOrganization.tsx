@@ -125,7 +125,8 @@ const UsersTable = () => {
 
   const onClickRemoveUser = (removedUser:OrganizationUser) =>
   {
-    OrganizationService.deleteOrganizationUser(removedUser.organizationId,removedUser.userId);
+    OrganizationService.deleteOrganizationUser(removedUser.organizationId, removedUser.userId)
+    .then(() => setOrgUsers(orgUsers.filter((orgUser) => orgUser.userId !== removedUser.userId)));
   }
 
   return (
