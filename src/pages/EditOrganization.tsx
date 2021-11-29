@@ -152,9 +152,6 @@ const UsersTable = () => {
             <Td isNumeric>{orgUser.userId}</Td>
             <Td>
               <Flex justifyContent = "flex-end">
-                <Button colorScheme = "green">
-                  Confirm Change
-                </Button>
                 {
                   orgUser.userId !== user?.id && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
                     Remove User
