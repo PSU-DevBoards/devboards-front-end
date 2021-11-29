@@ -106,8 +106,18 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
     }
   };
   
-  const onWorkItemSaved = (workItem: WorkItem) => {
+  const onWorkItemCreated = (workItem: WorkItem) => {
     setChildren([...children, workItem]);
+  };
+
+  /* eslint-disable no-param-reassign */
+  const onWorkItemSaved = (workItem: WorkItem) => {
+    children.forEach((v) => {
+      if( v.id === workItem.id ){
+        v = workItem;
+      }
+    });
+    setChildren(children);
   };
 
   const onCardEdit = (cardId: string) => {
@@ -199,7 +209,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
         <EditWorkItemModal
           workItemType={parent.type === 'FEATURE' ? 'STORY' : 'TASK'}
           isOpen={isNewItemOpen}
-          onWorkItemSaved={onWorkItemSaved}
+          onWorkItemSaved={onWorkItemCreated}
           onClose={onCloseNewItem}
           parentId={parent.id}
         />
