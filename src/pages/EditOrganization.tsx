@@ -34,11 +34,13 @@ import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import Section from '../components/Section';
 import { useOrganization } from '../contexts/organization-context';
+import { useUser } from '../contexts/user-context'
 import OrganizationService, {
   Organization,
   OrganizationUser,
 } from '../services/organization.service';
 import RoleService, { Role } from '../services/role.service';
+
 
 const OrganizationForm = () => {
   const toast = useToast();
@@ -113,7 +115,7 @@ const UsersTable = () => {
   const [orgUsers, setOrgUsers] = useState<Array<OrganizationUser>>([]);
   const { orgId } = useParams<{ orgId: string }>();
   const history = useHistory();
-
+  const user = useUser();
   useEffect(() => {
     const id = parseInt(orgId, 10);
 
@@ -124,12 +126,18 @@ const UsersTable = () => {
     RoleService.listRoles().then(setRoles);
   }, []);
 
+  const onClickRemoveUser = (removedUser:OrganizationUser) =>
+  {
+    OrganizationService.deleteOrganizationUser(removedUser.organizationId, removedUser.userId).then(() => setOrgUsers(orgUsers.filter((orgUser) => orgUser.userId !== removedUser.userId)));
+  }
+
   return (
     <Table variant="simple" title="Users">
       <Thead>
         <Tr>
           <Th>Role</Th>
           <Th isNumeric>User ID</Th>
+          <Th> Options </Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -142,6 +150,16 @@ const UsersTable = () => {
               }
             </Td>
             <Td isNumeric>{orgUser.userId}</Td>
+            <Td>
+              <Flex justifyContent = "flex-end">
+                {
+                  orgUser.userId !== user?.id && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
+                    Remove User
+                  </Button>
+                }
+
+              </Flex>
+            </Td>
           </Tr>
         ))}
       </Tbody>

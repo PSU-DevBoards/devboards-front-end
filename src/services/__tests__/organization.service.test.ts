@@ -4,6 +4,7 @@ describe('organizationService', () => {
   it('gets organization by id', async () => {
     const org = { id: 1, name: 'testOrg', owner: { id: 1, username: 'test' } };
     const requestHeader: HeadersInit = new Headers();
+
     requestHeader.set('Content-Type', 'application/json');
 
     global.fetch = jest.fn(() =>
@@ -210,7 +211,27 @@ describe('organizationService', () => {
       })
     );
   });
+  test('deletes an organization by id', () => {
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          ok: true,
+          headers: { 'Content-Type': 'application/json' },
+          text: () => Promise.resolve(''),
+        } as any)
+      );
 
+      organizationService.deleteOrganizationUser(1,1);
+
+      expect(global.fetch).toBeCalledWith(
+        expect.stringContaining('/organizations/1/users/1'),
+        expect.objectContaining({
+          method: 'DELETE',
+          headers: {
+            Authorization: expect.any(String),
+          },
+        })
+      );
+    });
   afterEach(() => {
     (global.fetch as jest.Mock).mockRestore();
   });
