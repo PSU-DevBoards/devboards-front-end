@@ -19,9 +19,21 @@ describe('BoardSwimlane', () => {
       workItem: Partial<Pick<WorkItem, 'name' | 'status'>>
     ]
   >;
+  let getWorkItemSpy: jest.SpyInstance<
+    Promise<WorkItem>,
+    [orgId: number, itemId: number]
+  >;
   let getWorkItemsSpy: jest.SpyInstance<
     Promise<WorkItem[]>,
     [orgId: number, filter?: Partial<Pick<WorkItem, 'type' | 'parentId'>>]
+  >;
+  let createWorkItemSpy: jest.SpyInstance<
+    Promise<WorkItem>,
+    [orgId: number, workItem: Pick<WorkItem, 'name'>]
+  >;
+  let deleteWorkItemSpy: jest.SpyInstance<
+    Promise<WorkItem>,
+    [orgId: number, workItemId: number]
   >;
   let mockWorkItem: WorkItem;
 
@@ -32,7 +44,7 @@ describe('BoardSwimlane', () => {
       name: 'test feature',
       priority: 1,
       description: '',
-      status: 'IN_PROGRESS',
+      status: 'BACKLOG',
       type: 'FEATURE',
     };
   });
@@ -49,6 +61,18 @@ describe('BoardSwimlane', () => {
     getWorkItemsSpy = jest.spyOn(WorkitemService, 'getWorkItems');
 
     getWorkItemsSpy.mockResolvedValue([mockWorkItem]);
+
+    createWorkItemSpy = jest.spyOn(WorkitemService, 'createWorkItem');
+
+    createWorkItemSpy.mockResolvedValue(mockWorkItem);
+
+    deleteWorkItemSpy = jest.spyOn(WorkitemService, 'deleteWorkItem');
+
+    deleteWorkItemSpy.mockResolvedValue(mockWorkItem);
+
+    getWorkItemSpy = jest.spyOn(WorkitemService, 'getWorkItem');
+
+    getWorkItemSpy.mockResolvedValue(mockWorkItem);
   });
 
   test('request work items', async () => {
@@ -117,7 +141,7 @@ describe('BoardSwimlane', () => {
     );
 
     const items = await screen.findAllByText(
-      `Feature name changed to: "new feature name".`
+      `Work item name changed to: "new feature name".`
     );
     expect(items.length).toBeGreaterThan(0);
   });
@@ -143,10 +167,41 @@ describe('BoardSwimlane', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('Feature modifications failed!')
+        screen.getByText('Work item modifications failed!')
       ).toBeInTheDocument();
 
       expect(screen.getByText('ErrorMessage')).toBeInTheDocument();
+    });
+  });
+
+  test('notify when work item patch request success', async () => {
+    const { container } = render(
+      <Accordion>
+        <BoardSwimlane key={mockWorkItem.id} parent={mockWorkItem} />
+      </Accordion>
+    );
+
+    const addStory = screen.getByLabelText('Add Story');
+    fireEvent.click(addStory);
+
+    const nameInput = screen.getByPlaceholderText('Name');
+    fireEvent.change(nameInput, { target: { value: 'test story' } });
+
+    const createStory = screen.getByText('Create');
+    fireEvent.click(createStory);
+
+    await waitFor(() => {
+      const card = container.querySelector('[data-id="1"]');
+      fireEvent.click(card!);
+
+      expect(getWorkItemSpy).toBeCalledTimes(1);
+    });
+
+    await waitFor(() => {
+      const submit = screen.getByText('Edit');
+      fireEvent.click(submit);
+
+      expect(updateWorkItemSpy).toBeCalledTimes(1);
     });
   });
 
@@ -170,7 +225,7 @@ describe('BoardSwimlane', () => {
     fireEvent.click(submit);
 
     const messages = await screen.findAllByText(
-      'Feature modifications failed!'
+      'Work item modifications failed!'
     );
     expect(messages.length).toBeGreaterThan(0);
   });

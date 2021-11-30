@@ -228,12 +228,14 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
           handleDragEnd={handleCardMove}
           onCardClick={onCardEdit}
           onCardDelete={onCardDelete}
+          aria-label="Scrum Board"
         />
         <Flex justifyContent="flex-end">
           <Button
             variant="outline"
             onClick={onOpenNewItem}
             rightIcon={<BiPlus />}
+            aria-label={`Add ${parent.type === 'FEATURE' ? 'Story' : 'Task'}`}
           >
             Add {parent.type === 'FEATURE' ? 'Story' : 'Task'}
           </Button>
