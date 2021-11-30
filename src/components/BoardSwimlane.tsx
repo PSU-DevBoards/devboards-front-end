@@ -105,29 +105,26 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
       });
     }
   };
-  
+
   const onWorkItemCreated = (workItem: WorkItem) => {
     setChildren([...children, workItem]);
   };
 
-  /* eslint-disable no-param-reassign */
-  const onWorkItemSaved = (workItem: WorkItem) => {
-    children.forEach((v) => {
-      if( v.id === workItem.id ){
-        v = workItem;
-      }
-    });
-    setChildren(children);
-  };
+  const onWorkItemSaved = (workItem: WorkItem) =>
+    setChildren(
+      children.map((child) => (child.id === workItem.id ? workItem : child))
+    );
 
   const onCardEdit = (cardId: string) => {
-    WorkitemService.getWorkItem(parent.organizationId, parseInt(cardId, 10))
-    .then((workItem: WorkItem) => {
+    WorkitemService.getWorkItem(
+      parent.organizationId,
+      parseInt(cardId, 10)
+    ).then((workItem: WorkItem) => {
       setWorkItem(workItem);
       onOpenEditItem();
     });
-  }
-  
+  };
+
   const onSubmitEditable = (name: string) => {
     const toastData: UseToastOptions = {
       position: 'bottom-right',
