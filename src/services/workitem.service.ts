@@ -50,6 +50,13 @@ class WorkItemService extends DbApiService {
     );
   }
 
+  public async deleteWorkItem(
+    orgId: number,
+    workItemId: number,
+  ): Promise<WorkItem> {
+    return this.delete(`/organizations/${orgId}/work-items/${workItemId}`);
+  }
+
   public async createWorkItem(
     orgId: number,
     workItem: Pick<WorkItem, 'name'>

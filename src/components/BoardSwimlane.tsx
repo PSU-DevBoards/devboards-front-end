@@ -115,6 +115,11 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
       children.map((child) => (child.id === workItem.id ? workItem : child))
     );
 
+  const onWorkItemDeleted = (workItem: WorkItem) =>
+    setChildren(
+      children.filter((child) => (child.id !== workItem.id))
+    );
+
   const onCardEdit = (cardId: string) => {
     WorkitemService.getWorkItem(
       parent.organizationId,
@@ -122,7 +127,36 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
     ).then((workItem: WorkItem) => {
       setWorkItem(workItem);
       onOpenEditItem();
+    }).catch(() => {
+      const toastData: UseToastOptions = {
+        position: 'bottom-right',
+        status: 'error',
+        title: 'Work item modifications failed!',
+      };
+      toast(toastData);
     });
+  };
+
+  const onCardDelete = (cardId: string) => {
+    const toastData: UseToastOptions = {
+      position: 'bottom-right',
+      status: 'error',
+      title: 'Work item deletion failed!',
+    };
+
+    WorkitemService.getWorkItem(
+      parent.organizationId,
+      parseInt(cardId, 10)
+    ).then((workItem: WorkItem) => {
+      WorkitemService.deleteWorkItem(
+        parent.organizationId,
+        parseInt(cardId, 10)
+      ).then(() => {
+        toastData.status = 'success';
+        toastData.title = 'Work item successfully deleted.';
+        onWorkItemDeleted(workItem);
+      }).finally(() => toast(toastData));
+    }).catch(() => toast(toastData));
   };
 
   const onSubmitEditable = (name: string) => {
@@ -136,11 +170,11 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
       name,
     })
       .then(() => {
-        toastData.description = `Feature name changed to: "${name}".`;
+        toastData.description = `Work item name changed to: "${name}".`;
       })
       .catch((err) => {
         toastData.status = 'error';
-        toastData.title = 'Feature modifications failed!';
+        toastData.title = 'Work item modifications failed!';
 
         if (err.errors) {
           const [errorMessages] = err.errors;
@@ -193,6 +227,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
           data={getBoardData()}
           handleDragEnd={handleCardMove}
           onCardClick={onCardEdit}
+          onCardDelete={onCardDelete}
         />
         <Flex justifyContent="flex-end">
           <Button

@@ -46,11 +46,11 @@ function EditWorkItemModal({
   workItem?: WorkItem;
   parentId?: number;
 }) {
+  const toast = useToast();
   const { organization } = useOrganization();
   const [itemPriority, setPriority] = useControllableState({
     defaultValue: (workItem ? workItem.priority : 1)
   });
-  const toast = useToast();
   const {
     isOpen: isDescOpen,
     onOpen: onDescOpen,
@@ -213,7 +213,7 @@ function EditWorkItemModal({
                       name="priority"
                       max={10}
                       min={1}
-                      value={(workItem ? workItem.priority : itemPriority )}
+                      value={itemPriority}
                       aria-label="Priority Input"
                     >
                       <NumberInputField />
