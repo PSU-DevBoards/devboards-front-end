@@ -174,37 +174,6 @@ describe('BoardSwimlane', () => {
     });
   });
 
-  test('notify when work item patch request success', async () => {
-    const { container } = render(
-      <Accordion>
-        <BoardSwimlane key={mockWorkItem.id} parent={mockWorkItem} />
-      </Accordion>
-    );
-
-    const addStory = screen.getByLabelText('Add Story');
-    fireEvent.click(addStory);
-
-    const nameInput = screen.getByPlaceholderText('Name');
-    fireEvent.change(nameInput, { target: { value: 'test story' } });
-
-    const createStory = screen.getByText('Create');
-    fireEvent.click(createStory);
-
-    await waitFor(() => {
-      const card = container.querySelector('[data-id="1"]');
-      fireEvent.click(card!);
-
-      expect(getWorkItemSpy).toBeCalledTimes(1);
-    });
-
-    await waitFor(() => {
-      const submit = screen.getByText('Edit');
-      fireEvent.click(submit);
-
-      expect(updateWorkItemSpy).toBeCalledTimes(1);
-    });
-  });
-
   test('notify when work item patch request fails with no error messages', async () => {
     updateWorkItemSpy.mockReset();
     updateWorkItemSpy.mockRejectedValueOnce({});
