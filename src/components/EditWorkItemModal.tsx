@@ -61,7 +61,7 @@ function EditWorkItemModal({
     workItemType.charAt(0) + workItemType.slice(1).toLowerCase();
 
   const getModalTitle = () =>
-    workItem ? `Edit F-${workItem.id}` : `New ${getNiceItemType()}`;
+    workItem ? `Edit ${workItemType.charAt(0)}-${workItem.id}` : `New ${getNiceItemType()}`;
 
   const onSubmitForm = ({
     name,
@@ -259,6 +259,7 @@ function EditWorkItemModal({
               form="create_feature_form"
               type="submit"
               colorScheme="purple"
+              aria-label={ `Submit ${workItem ? 'Edit' : 'Create'}` }
             >
               { workItem ? 'Edit' : 'Create' }
             </Button>

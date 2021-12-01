@@ -36,6 +36,7 @@ describe('BoardSwimlane', () => {
     [orgId: number, workItemId: number]
   >;
   let mockWorkItem: WorkItem;
+  let mockStory: WorkItem;
 
   beforeAll(() => {
     mockWorkItem = {
@@ -46,6 +47,15 @@ describe('BoardSwimlane', () => {
       description: '',
       status: 'BACKLOG',
       type: 'FEATURE',
+    };
+    mockStory = {
+      id: 2,
+      organizationId: 1,
+      name: 'test story',
+      priority: 1,
+      description: '',
+      status: 'BACKLOG',
+      type: 'STORY',
     };
   });
 
@@ -172,6 +182,81 @@ describe('BoardSwimlane', () => {
 
       expect(screen.getByText('ErrorMessage')).toBeInTheDocument();
     });
+  });
+
+  test('notify when work item patch request success', async () => {
+    getWorkItemsSpy.mockReset();
+    getWorkItemsSpy.mockResolvedValue([mockStory]);
+
+    render(
+      <Accordion>
+        <BoardSwimlane key={mockWorkItem.id} parent={mockWorkItem} />
+      </Accordion>
+    );
+
+    await waitFor(() => {
+      const card = screen.getByText('test story');
+      fireEvent.click(card);
+    });
+
+    await waitFor(() => {
+      const editModal = screen.getByLabelText('Edit Work Item Header');
+      expect(editModal).toBeInTheDocument();
+
+      expect(getWorkItemSpy).toBeCalledTimes(1);
+
+      const nameInput = screen.getByPlaceholderText('Name');
+      fireEvent.change(nameInput, { target: { value: 'new feature name' } });
+
+      const submit = screen.getByLabelText('Submit Edit');
+      fireEvent.click(submit);
+    });
+  });
+
+  test('delete work item card', async () => {
+    getWorkItemsSpy.mockReset();
+    getWorkItemsSpy.mockResolvedValue([mockStory]);
+
+    render(
+      <Accordion>
+        <BoardSwimlane key={mockWorkItem.id} parent={mockWorkItem} />
+      </Accordion>
+    );
+
+    await waitFor(() => {
+      const card = screen.getByText('✖');
+      fireEvent.click(card);
+    });
+
+    await waitFor(() => {
+      expect(deleteWorkItemSpy).toBeCalledTimes(1);
+      expect(screen.getByText('Work item successfully deleted.')).toBeInTheDocument();
+    });
+  });
+
+  test('notify when work item edit window fails', async () => {
+    getWorkItemsSpy.mockReset();
+    getWorkItemsSpy.mockResolvedValue([mockStory]);
+
+    render(
+      <Accordion>
+        <BoardSwimlane key={mockWorkItem.id} parent={mockWorkItem} />
+      </Accordion>
+    );
+
+    getWorkItemSpy.mockReset();
+    getWorkItemSpy.mockRejectedValueOnce({errors: ['ErrorMessage']});
+
+    await waitFor(() => {
+      const card = screen.getByText('test story');
+      fireEvent.click(card);
+    });
+
+    const messages = await screen.findAllByText(
+      'Work item modifications failed!'
+    );
+
+    expect(messages.length).toBeGreaterThan(0);
   });
 
   test('notify when work item patch request fails with no error messages', async () => {
