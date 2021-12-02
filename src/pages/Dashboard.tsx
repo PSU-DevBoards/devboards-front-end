@@ -6,7 +6,7 @@ import { getPreference } from '../services/preference.service';
 
 function Dashboard() {
   const history = useHistory();
-  const [organizationCount, setOrganizationCount] = useState(-1);
+  const [organizationCount, setOrganizationCount] = useState<number>();
 
   useEffect(() => {
     organizationService.getCurrentUserOrganizations().then((organizations) => {
@@ -23,10 +23,7 @@ function Dashboard() {
     });
   }, []);
 
-  if( organizationCount === 0 )
-    return <NoOrganization/>;
-
-  return <></>;
+  return organizationCount === 0 ? <NoOrganization/> : <></>;
 }
 
 export default Dashboard;
