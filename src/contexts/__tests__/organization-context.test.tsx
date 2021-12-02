@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import { OrganizationProvider, useOrganization } from '../organization-context';
 import OrganizationService, {
   Organization,
@@ -9,6 +9,8 @@ jest.mock('react-router');
 jest.mock('../../services/organization.service');
 
 const mockUseParams = useParams as jest.Mock;
+const pushMock = jest.fn();
+const useHistoryMock: jest.Mock = useHistory as any;
 
 const OrganizationConsumer = () => {
   const { organization } = useOrganization();
@@ -21,6 +23,9 @@ describe('Organization Context', () => {
 
   beforeEach(() => {
     mockUseParams.mockReturnValue({ orgId: '1' });
+    useHistoryMock.mockReturnValue({
+      push: pushMock,
+    });
 
     getOrgSpy = jest.spyOn(OrganizationService, 'getOrganizationById');
   });
@@ -33,6 +38,18 @@ describe('Organization Context', () => {
     );
 
     expect(getOrgSpy).toBeCalledWith(1);
+  });
+
+  test('redirects to not found if invalid org id', async () => {
+    getOrgSpy.mockImplementation(() => Promise.reject());
+
+    render(
+      <OrganizationProvider>
+        <p>TEST</p>
+      </OrganizationProvider>
+    );
+
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith('/not-found'));
   });
 
   test('makes the organization context available to a consumer', async () => {
@@ -56,5 +73,6 @@ describe('Organization Context', () => {
   afterEach(() => {
     mockUseParams.mockRestore();
     getOrgSpy.mockRestore();
+    useHistoryMock.mockClear();
   });
 });
