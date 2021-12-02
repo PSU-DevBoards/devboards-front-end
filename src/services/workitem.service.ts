@@ -19,16 +19,14 @@ export type WorkItem = {
   type: 'TASK' | 'STORY' | 'FEATURE';
   status: 'BACKLOG' | 'READY' | 'IN_PROGRESS' | 'VERIFY' | 'DONE';
   priority: number;
+  estimate?: number;
   description?: string;
   organizationId: number;
   parentId?: number;
 };
 
 class WorkItemService extends DbApiService {
-  public async getWorkItem(
-    orgId: number,
-    itemId: number,
-  ): Promise<WorkItem> {
+  public async getWorkItem(orgId: number, itemId: number): Promise<WorkItem> {
     return this.get(`/organizations/${orgId}/work-items/${itemId}`);
   }
 
@@ -42,7 +40,12 @@ class WorkItemService extends DbApiService {
   public async updateWorkItem(
     orgId: number,
     workItemId: number,
-    workItem: Partial<Pick<WorkItem, 'name' | 'status' | 'priority' | 'description'>>
+    workItem: Partial<
+      Pick<
+        WorkItem,
+        'name' | 'status' | 'priority' | 'description' | 'estimate'
+      >
+    >
   ): Promise<WorkItem> {
     return this.patch(
       `/organizations/${orgId}/work-items/${workItemId}`,
@@ -52,7 +55,7 @@ class WorkItemService extends DbApiService {
 
   public async deleteWorkItem(
     orgId: number,
-    workItemId: number,
+    workItemId: number
   ): Promise<WorkItem> {
     return this.delete(`/organizations/${orgId}/work-items/${workItemId}`);
   }
@@ -63,34 +66,6 @@ class WorkItemService extends DbApiService {
   ): Promise<WorkItem> {
     return this.post(`/organizations/${orgId}/work-items/`, workItem);
   }
-
-  /*
-  public async listWorkItems(
-    orgId: number,
-    filter?: Partial<Pick<WorkItem, 'type' | 'parent_id'>>
-  ): Promise<Array<WorkItem>> {
-    return Promise.resolve([
-      {
-        id: 1,
-        name: 'Test Feature',
-        type: 'FEATURE',
-        status: 'READY',
-        priority: 1,
-        description: 'Test',
-        organizationId: 1,
-      },
-      {
-        id: 5,
-        name: 'Test Feature 2',
-        type: 'FEATURE',
-        status: 'READY',
-        priority: 1,
-        description: 'Test',
-        organizationId: 1,
-      },
-    ]);
-  }
-  */
 }
 
 export default new WorkItemService();

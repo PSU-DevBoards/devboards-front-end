@@ -35,6 +35,7 @@ describe('EditWorkItemModal', () => {
       description: '',
       status: 'IN_PROGRESS',
       type: 'FEATURE',
+      estimate: 1,
     };
 
     workItemSaved.mockReturnValue(mockWorkItem);
@@ -131,6 +132,9 @@ describe('EditWorkItemModal', () => {
     const priorityInput = screen.getByLabelText('Priority Input');
     fireEvent.change(priorityInput, { target: { value: 2 } });
 
+    const estimateInput = screen.getByLabelText('Estimate Input');
+    fireEvent.change(estimateInput, { target: { value: 2 } });
+
     const create = screen.getByText('Create');
     fireEvent.click(create);
 
@@ -196,9 +200,7 @@ describe('EditWorkItemModal', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByText(
-          'Story "new name" successfully modified.'
-        )
+        screen.getByText('Story "new name" successfully modified.')
       ).toBeInTheDocument()
     );
   });
@@ -230,9 +232,7 @@ describe('EditWorkItemModal', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByText(
-          'Error modifying Story "test story", try again later'
-        )
+        screen.getByText('Error modifying Story "test story", try again later')
       ).toBeInTheDocument()
     );
   });
