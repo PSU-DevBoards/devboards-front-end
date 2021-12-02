@@ -116,25 +116,22 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
     );
 
   const onWorkItemDeleted = (workItem: WorkItem) =>
-    setChildren(
-      children.filter((child) => (child.id !== workItem.id))
-    );
+    setChildren(children.filter((child) => child.id !== workItem.id));
 
   const onCardEdit = (cardId: string) => {
-    WorkitemService.getWorkItem(
-      parent.organizationId,
-      parseInt(cardId, 10)
-    ).then((workItem: WorkItem) => {
-      setWorkItem(workItem);
-      onOpenEditItem();
-    }).catch(() => {
-      const toastData: UseToastOptions = {
-        position: 'bottom-right',
-        status: 'error',
-        title: 'Work item modifications failed!',
-      };
-      toast(toastData);
-    });
+    WorkitemService.getWorkItem(parent.organizationId, parseInt(cardId, 10))
+      .then((workItem: WorkItem) => {
+        setWorkItem(workItem);
+        onOpenEditItem();
+      })
+      .catch(() => {
+        const toastData: UseToastOptions = {
+          position: 'bottom-right',
+          status: 'error',
+          title: 'Work item modifications failed!',
+        };
+        toast(toastData);
+      });
   };
 
   const onCardDelete = (cardId: string) => {
@@ -144,19 +141,20 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
       title: 'Work item deletion failed!',
     };
 
-    WorkitemService.getWorkItem(
-      parent.organizationId,
-      parseInt(cardId, 10)
-    ).then((workItem: WorkItem) => {
-      WorkitemService.deleteWorkItem(
-        parent.organizationId,
-        parseInt(cardId, 10)
-      ).then(() => {
-        toastData.status = 'success';
-        toastData.title = 'Work item successfully deleted.';
-        onWorkItemDeleted(workItem);
-      }).finally(() => toast(toastData));
-    }).catch(() => toast(toastData));
+    WorkitemService.getWorkItem(parent.organizationId, parseInt(cardId, 10))
+      .then((workItem: WorkItem) => {
+        WorkitemService.deleteWorkItem(
+          parent.organizationId,
+          parseInt(cardId, 10)
+        )
+          .then(() => {
+            toastData.status = 'success';
+            toastData.title = 'Work item successfully deleted.';
+            onWorkItemDeleted(workItem);
+          })
+          .finally(() => toast(toastData));
+      })
+      .catch(() => toast(toastData));
   };
 
   const onSubmitEditable = (name: string) => {
