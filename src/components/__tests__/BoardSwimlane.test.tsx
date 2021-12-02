@@ -230,8 +230,13 @@ describe('BoardSwimlane', () => {
 
     await waitFor(() => {
       expect(deleteWorkItemSpy).toBeCalledTimes(1);
-      expect(screen.getByText('Work item successfully deleted.')).toBeInTheDocument();
     });
+
+    const messages = await screen.findAllByText(
+      'Work item successfully deleted.'
+    );
+
+    expect(messages.length).toBeGreaterThan(0);
   });
 
   test('notify when work item edit window fails', async () => {
