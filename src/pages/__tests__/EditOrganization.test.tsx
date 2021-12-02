@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useParams, useHistory } from 'react-router';
 import { useOrganization } from '../../contexts/organization-context';
-import { useUser } from'../../contexts/user-context'
+import { useUser } from '../../contexts/user-context';
 import OrganizationService, {
   Organization,
   OrganizationUser,
@@ -13,11 +13,12 @@ jest.mock('react-router');
 jest.mock('../../services/organization.service', () => ({
   updateOrganization: () => Promise.resolve({}),
   getOrganizationUsers: () => Promise.resolve([{ userId: 1 }]),
-  inviteUser: () => Promise.resolve({ organizationId: 1, userId: 1, roleId: 2 }),
-  deleteOrganizationUser:() => Promise.resolve({})
+  inviteUser: () =>
+    Promise.resolve({ organizationId: 1, userId: 1, roleId: 2 }),
+  deleteOrganizationUser: () => Promise.resolve({}),
 }));
 
-jest.mock('../../contexts/user-context')
+jest.mock('../../contexts/user-context');
 
 jest.mock('../../services/role.service', () => ({
   listRoles: () =>
@@ -27,12 +28,11 @@ jest.mock('../../services/role.service', () => ({
     ]),
 }));
 
-
 const useOrganizationMock: jest.Mock = useOrganization as any;
 const useParamsMock: jest.Mock = useParams as any;
 const pushMock = jest.fn();
 const useHistoryMock: jest.Mock = useHistory as any;
-const useUserMock:jest.Mock = useUser as any;
+const useUserMock: jest.Mock = useUser as any;
 
 describe('EditOrganization', () => {
   let updateOrgSpy: jest.SpyInstance<
@@ -46,13 +46,11 @@ describe('EditOrganization', () => {
   >;
 
   let getOrganizationUsersSpy: jest.SpyInstance<
-  Promise<Array<OrganizationUser>>,
-  any
+    Promise<Array<OrganizationUser>>,
+    any
   >;
 
-  let deleteOrganizationUserSpy:jest.SpyInstance<
-    Promise<any>,any
-  >;
+  let deleteOrganizationUserSpy: jest.SpyInstance<Promise<any>, any>;
 
   beforeEach(() => {
     useParamsMock.mockReturnValue({
@@ -66,14 +64,19 @@ describe('EditOrganization', () => {
 
     useHistoryMock.mockReturnValue({ push: pushMock });
 
-
-
     updateOrgSpy = jest.spyOn(OrganizationService, 'updateOrganization');
     inviteUserSpy = jest.spyOn(OrganizationService, 'inviteUser');
-    getOrganizationUsersSpy = jest.spyOn(OrganizationService, 'getOrganizationUsers');
+    getOrganizationUsersSpy = jest.spyOn(
+      OrganizationService,
+      'getOrganizationUsers'
+    );
     getOrganizationUsersSpy.mockResolvedValue([
-      { userId: 1, organizationId: 1, roleId: 1 },]);
-    deleteOrganizationUserSpy = jest.spyOn(OrganizationService, 'deleteOrganizationUser');
+      { userId: 1, organizationId: 1, roleId: 1 },
+    ]);
+    deleteOrganizationUserSpy = jest.spyOn(
+      OrganizationService,
+      'deleteOrganizationUser'
+    );
     deleteOrganizationUserSpy.mockResolvedValue();
   });
 
@@ -200,16 +203,19 @@ describe('EditOrganization', () => {
     );
   });
 
-      test('remove user',async () => {
-        useUserMock.mockReturnValue({id:1});
-        getOrganizationUsersSpy.mockResolvedValue([{userId:1 },{userId:2,organizationId:1}])
-            render(<EditOrganization />);
+  test('remove user', async () => {
+    useUserMock.mockReturnValue({ id: 1 });
+    getOrganizationUsersSpy.mockResolvedValue([
+      { userId: 1 },
+      { userId: 2, organizationId: 1 },
+    ]);
+    render(<EditOrganization />);
 
-            const remove = await waitFor(()  => screen.getByText('Remove User'));
-            fireEvent.click(remove);
+    const remove = await waitFor(() => screen.getByText('Remove User'));
+    fireEvent.click(remove);
 
-            expect(deleteOrganizationUserSpy).toHaveBeenCalledWith(1,2);
-      });
+    expect(deleteOrganizationUserSpy).toHaveBeenCalledWith(1, 2);
+  });
 
   test('invite user modal requires valid email', async () => {
     inviteUserSpy.mockResolvedValue({

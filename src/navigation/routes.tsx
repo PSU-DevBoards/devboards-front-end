@@ -4,6 +4,7 @@ import Landing from '../pages/Landing';
 import Organizations from '../pages/Organizations';
 import EditOrganization from '../pages/EditOrganization';
 import OrganizationBoard from '../pages/OrganizationBoard';
+import NotFound from '../pages/NotFound';
 
 export default [
   { name: 'Landing', path: '/', authenticated: false, component: <Landing /> },
@@ -30,5 +31,11 @@ export default [
     path: '/organizations/:orgId',
     authenticated: true,
     component: <OrganizationBoard />,
+  },
+  {
+    name: 'Not Found',
+    path: '/not-found',
+    authenticated: false,
+    component: <NotFound />,
   },
 ];

@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import OrganizationService, {
   Organization,
 } from '../services/organization.service';
+import { setPreference } from '../services/preference.service';
 
 type OrganizationContextType = {
   organization: Organization | undefined;
@@ -18,12 +19,16 @@ const OrganizationContext = createContext<OrganizationContextType | undefined>(
 function OrganizationProvider({ children }: { children: React.ReactNode }) {
   const { orgId } = useParams<{ orgId: string }>();
   const [organization, setOrganization] = useState<Organization>();
+  const history = useHistory();
 
   useEffect(() => {
     if (orgId)
-      OrganizationService.getOrganizationById(parseInt(orgId, 10)).then(
-        setOrganization
-      );
+      OrganizationService.getOrganizationById(parseInt(orgId, 10))
+        .then((org) => {
+          setOrganization(org);
+          setPreference('default_organization', org.id);
+        })
+        .catch(() => history.push('/not-found'));
   }, [orgId]);
 
   return (
