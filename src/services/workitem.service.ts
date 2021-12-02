@@ -25,6 +25,13 @@ export type WorkItem = {
 };
 
 class WorkItemService extends DbApiService {
+  public async getWorkItem(
+    orgId: number,
+    itemId: number,
+  ): Promise<WorkItem> {
+    return this.get(`/organizations/${orgId}/work-items/${itemId}`);
+  }
+
   public async getWorkItems(
     orgId: number,
     filter?: Partial<Pick<WorkItem, 'type' | 'parentId'>>
@@ -35,12 +42,19 @@ class WorkItemService extends DbApiService {
   public async updateWorkItem(
     orgId: number,
     workItemId: number,
-    workItem: Partial<Pick<WorkItem, 'name' | 'status'>>
+    workItem: Partial<Pick<WorkItem, 'name' | 'status' | 'priority' | 'description'>>
   ): Promise<WorkItem> {
     return this.patch(
       `/organizations/${orgId}/work-items/${workItemId}`,
       workItem
     );
+  }
+
+  public async deleteWorkItem(
+    orgId: number,
+    workItemId: number,
+  ): Promise<WorkItem> {
+    return this.delete(`/organizations/${orgId}/work-items/${workItemId}`);
   }
 
   public async createWorkItem(

@@ -14,6 +14,14 @@ describe('EditWorkItemModal', () => {
     Promise<WorkItem>,
     [orgId: number, workItem: Pick<WorkItem, 'name'>]
   >;
+  let updateWorkItemSpy: jest.SpyInstance<
+    Promise<WorkItem>,
+    [
+      orgId: number,
+      workItemId: number,
+      workItem: Partial<Pick<WorkItem, 'name' | 'status'>>
+    ]
+  >;
   let mockWorkItem: WorkItem;
   const workItemSaved = jest.fn();
   const onClose = jest.fn();
@@ -41,6 +49,10 @@ describe('EditWorkItemModal', () => {
     createWorkItemSpy = jest.spyOn(WorkitemService, 'createWorkItem');
 
     createWorkItemSpy.mockResolvedValue(mockWorkItem);
+
+    updateWorkItemSpy = jest.spyOn(WorkitemService, 'updateWorkItem');
+
+    updateWorkItemSpy.mockResolvedValue(mockWorkItem);
   });
 
   test('Modal title is derived from work item ID when one is passed', async () => {
@@ -156,6 +168,70 @@ describe('EditWorkItemModal', () => {
       expect(
         screen.getByText(
           'Error creating Feature "test feature", try again later'
+        )
+      ).toBeInTheDocument()
+    );
+  });
+
+  test('displays a success message when work item modification completed', async () => {
+    render(
+      <EditWorkItemModal
+        parentId={mockWorkItem.parentId}
+        workItem={mockWorkItem}
+        workItemType="STORY"
+        isOpen
+        onWorkItemSaved={workItemSaved}
+        onClose={onClose}
+      />
+    );
+
+    const nameInput = screen.getByPlaceholderText('Name');
+    fireEvent.change(nameInput, { target: { value: 'new name' } });
+
+    const descInput = screen.getByPlaceholderText('Description');
+    fireEvent.change(descInput, { target: { value: 'description' } });
+
+    const edit = screen.getByText('Edit');
+    fireEvent.click(edit);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          'Story "new name" successfully modified.'
+        )
+      ).toBeInTheDocument()
+    );
+  });
+
+  test('displays a failure message when work item modification fails to complete', async () => {
+    updateWorkItemSpy.mockImplementationOnce(() =>
+      Promise.reject(new Error('Failure.'))
+    );
+
+    render(
+      <EditWorkItemModal
+        parentId={mockWorkItem.parentId}
+        workItem={mockWorkItem}
+        workItemType="STORY"
+        isOpen
+        onWorkItemSaved={workItemSaved}
+        onClose={onClose}
+      />
+    );
+
+    const nameInput = screen.getByPlaceholderText('Name');
+    fireEvent.change(nameInput, { target: { value: 'test story' } });
+
+    const descInput = screen.getByPlaceholderText('Description');
+    fireEvent.change(descInput, { target: { value: 'description' } });
+
+    const edit = screen.getByText('Edit');
+    fireEvent.click(edit);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          'Error modifying Story "test story", try again later'
         )
       ).toBeInTheDocument()
     );
