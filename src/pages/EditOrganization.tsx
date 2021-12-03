@@ -116,6 +116,13 @@ const UsersTable = () => {
   const { orgId } = useParams<{ orgId: string }>();
   const history = useHistory();
   const user = useUser();
+  const {isOpen, onOpen, onClose} = useDisclosure();
+  const [newRole,setNewRole] = useState<Role>
+  const selectChange = (event:React.ChangeEvent<HtmlSelectElement>) => {
+    const value - event.target.value;
+    setNewRole(value);
+  }
+
   useEffect(() => {
     const id = parseInt(orgId, 10);
 
@@ -152,6 +159,30 @@ const UsersTable = () => {
             <Td isNumeric>{orgUser.userId}</Td>
             <Td>
               <Flex justifyContent = "flex-end">
+                <Button onClick={onOpen}> Change Role </Button>
+                <Modal isOpen={isOpen} onClose={onClose}>
+                  <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>Select New Role</ModalHeader>
+                       <ModalCloseButton />
+                       <ModalBody>
+                          Hello World!
+                       </ModalBody>
+                         <Select id="roleId" placeholder="Select Role" onChange = {selectChange}>
+                           {roles.map(({ id, name }) => (
+                             <option value={id} key={id}>
+                               {name}
+                             </option>
+                           ))}
+                         </Select>
+                       <ModalFooter>
+                         <Button colorScheme='blue' mr={3} onClick={onClose}>
+                           Close
+                         </Button>
+                      <Button colorScheme>Secondary Action</Button>
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
                 {
                   orgUser.userId !== user?.id && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
                     Remove User
@@ -166,6 +197,9 @@ const UsersTable = () => {
     </Table>
   );
 };
+
+
+
 
 const InviteUserModal = ({
   isOpen,
