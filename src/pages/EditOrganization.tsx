@@ -138,7 +138,11 @@ const UsersTable = () => {
   {
     OrganizationService.deleteOrganizationUser(removedUser.organizationId, removedUser.userId).then(() => setOrgUsers(orgUsers.filter((orgUser) => orgUser.userId !== removedUser.userId)));
   }
-
+  const onClickEditUser = (editedUser:OrganizationUser) =>
+    {
+      orgUser.roleId = ?newRole;
+      OrganizationService.deleteOrganizationUser(editedUser.organizationId, editUser.userId, editedUser).then(() => setOrgUsers(orgUsers.filter((orgUser) => orgUser.userId !== removedUser.userId)));
+    }
   return (
     <Table variant="simple" title="Users">
       <Thead>
@@ -181,7 +185,7 @@ const UsersTable = () => {
                            Close
                          </Button>
                       <Button colorScheme='green' onClick={
-                        orgUser.roleId = newRole;
+                        onClickEditUser(orgUser);
 
                       }>
                         Confirm
