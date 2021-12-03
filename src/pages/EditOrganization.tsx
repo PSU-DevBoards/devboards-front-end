@@ -34,12 +34,13 @@ import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import Section from '../components/Section';
 import { useOrganization } from '../contexts/organization-context';
-import { useUser } from '../contexts/user-context';
+import { useUser } from '../contexts/user-context'
 import OrganizationService, {
   Organization,
   OrganizationUser,
 } from '../services/organization.service';
 import RoleService, { Role } from '../services/role.service';
+
 
 const OrganizationForm = () => {
   const toast = useToast();
@@ -258,6 +259,9 @@ const UsersTable = () => {
     </>
   );
 };
+
+
+
 
 const InviteUserModal = ({
   isOpen,
