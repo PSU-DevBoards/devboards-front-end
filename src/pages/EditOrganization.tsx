@@ -34,13 +34,12 @@ import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import Section from '../components/Section';
 import { useOrganization } from '../contexts/organization-context';
-import { useUser } from '../contexts/user-context'
+import { useUser } from '../contexts/user-context';
 import OrganizationService, {
   Organization,
   OrganizationUser,
 } from '../services/organization.service';
 import RoleService, { Role } from '../services/role.service';
-
 
 const OrganizationForm = () => {
   const toast = useToast();
@@ -110,19 +109,77 @@ const OrganizationForm = () => {
   );
 };
 
+const EditUserModal = ({
+  isOpen,
+  onClose,
+  roles,
+  editingUser,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  roles: Array<Role>;
+  editingUser?: OrganizationUser;
+}) => {
+  const [selectedRole, setSelectedRole] = useState<string>();
+
+  useEffect(() => {
+    if (editingUser) setSelectedRole(editingUser.roleId);
+  }, [editingUser]);
+
+  const selectChange = ({
+    target: { value },
+  }: React.ChangeEvent<HTMLSelectElement>) => setSelectedRole(value);
+
+  const onClickConfirm = () => {
+    if (editingUser && selectedRole)
+      OrganizationService.updateOrganizationUser(
+        editingUser.organizationId,
+        editingUser.userId,
+        { roleId: selectedRole }
+      );
+    onClose();
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Select New Role</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>Hello World!</ModalBody>
+        <Select
+          id="roleId"
+          placeholder="Select Role"
+          onChange={selectChange}
+          value={selectedRole}
+        >
+          {roles.map(({ id, name }) => (
+            <option value={id} key={id}>
+              {name}
+            </option>
+          ))}
+        </Select>
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={onClose}>
+            Close
+          </Button>
+          <Button colorScheme="green" onClick={onClickConfirm}>
+            Confirm
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
 const UsersTable = () => {
   const [roles, setRoles] = useState<Array<Role>>([]);
   const [orgUsers, setOrgUsers] = useState<Array<OrganizationUser>>([]);
   const { orgId } = useParams<{ orgId: string }>();
   const history = useHistory();
   const user = useUser();
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  const [newRole,setNewRole] = useState<Role>();
-
-  const selectChange = (event:React.ChangeEvent<HtmlSelectElement>) => {
-    const value = event.target.value;
-    setNewRole(value);
-  }
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [editingUser, setEditingUser] = useState<OrganizationUser>();
 
   useEffect(() => {
     const id = parseInt(orgId, 10);
@@ -134,78 +191,73 @@ const UsersTable = () => {
     RoleService.listRoles().then(setRoles);
   }, []);
 
-  const onClickRemoveUser = (removedUser:OrganizationUser) =>
-  {
-    OrganizationService.deleteOrganizationUser(removedUser.organizationId, removedUser.userId).then(() => setOrgUsers(orgUsers.filter((orgUser) => orgUser.userId !== removedUser.userId)));
-  }
+  const onClickRemoveUser = (removedUser: OrganizationUser) => {
+    OrganizationService.deleteOrganizationUser(
+      removedUser.organizationId,
+      removedUser.userId
+    ).then(() =>
+      setOrgUsers(
+        orgUsers.filter((orgUser) => orgUser.userId !== removedUser.userId)
+      )
+    );
+  };
+
+  const onClickEditUser = (orgUser: OrganizationUser) => {
+    setEditingUser(orgUser);
+    onOpen();
+  };
 
   return (
-    <Table variant="simple" title="Users">
-      <Thead>
-        <Tr>
-          <Th>Role</Th>
-          <Th isNumeric>User ID</Th>
-          <Th> Options </Th>
-        </Tr>
-      </Thead>
-      <Tbody>
-        {orgUsers.map((orgUser) => (
-          <Tr key={orgUser.userId}>
-            <Td>
-              {
-                roles.find((role) => role.id === parseInt(orgUser.roleId, 10))
-                  ?.name
-              }
-            </Td>
-            <Td isNumeric>{orgUser.userId}</Td>
-            <Td>
-              <Flex justifyContent = "flex-end">
-                <Button onClick={onOpen}> Change Role </Button>
-                <Modal isOpen={isOpen} onClose={onClose}>
-                  <ModalOverlay />
-                    <ModalContent>
-                      <ModalHeader>Select New Role</ModalHeader>
-                       <ModalCloseButton />
-                       <ModalBody>
-                          Hello World!
-                       </ModalBody>
-                         <Select id="roleId" placeholder="Select Role" onChange = {selectChange}>
-                           {roles.map(({ id, name }) => (
-                             <option value={id} key={id}>
-                               {name}
-                             </option>
-                           ))}
-                         </Select>
-                       <ModalFooter>
-                         <Button colorScheme='blue' mr={3} onClick={onClose}>
-                           Close
-                         </Button>
-                      <Button colorScheme='green' onClick={
-                        orgUser.roleId = newRole;
-
-                      }>
-                        Confirm
-                        </Button>
-                    </ModalFooter>
-                  </ModalContent>
-                </Modal>
-                {
-                  orgUser.userId !== user?.id && <Button colorScheme = "red" ml = {3} onClick = {() => onClickRemoveUser(orgUser)}>
-                    Remove User
-                  </Button>
-                }
-
-              </Flex>
-            </Td>
+    <>
+      <Table variant="simple" title="Users">
+        <Thead>
+          <Tr>
+            <Th>Role</Th>
+            <Th isNumeric>User ID</Th>
+            <Th> Options </Th>
           </Tr>
-        ))}
-      </Tbody>
-    </Table>
+        </Thead>
+        <Tbody>
+          {orgUsers.map((orgUser) => (
+            <Tr key={orgUser.userId}>
+              <Td>
+                {
+                  roles.find((role) => role.id === parseInt(orgUser.roleId, 10))
+                    ?.name
+                }
+              </Td>
+              <Td isNumeric>{orgUser.userId}</Td>
+              <Td>
+                <Flex justifyContent="flex-end">
+                  {orgUser.userId !== user?.id && (
+                    <>
+                      <Button onClick={() => onClickEditUser(orgUser)}>
+                        Edit
+                      </Button>
+                      <Button
+                        colorScheme="red"
+                        ml={3}
+                        onClick={() => onClickRemoveUser(orgUser)}
+                      >
+                        Remove User
+                      </Button>
+                    </>
+                  )}
+                </Flex>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+      <EditUserModal
+        roles={roles}
+        isOpen={isOpen}
+        onClose={onClose}
+        editingUser={editingUser}
+      />
+    </>
   );
 };
-
-
-
 
 const InviteUserModal = ({
   isOpen,
