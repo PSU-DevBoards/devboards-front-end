@@ -117,9 +117,10 @@ const UsersTable = () => {
   const history = useHistory();
   const user = useUser();
   const {isOpen, onOpen, onClose} = useDisclosure();
-  const [newRole,setNewRole] = useState<Role>
+  const [newRole,setNewRole] = useState<Role>();
+
   const selectChange = (event:React.ChangeEvent<HtmlSelectElement>) => {
-    const value - event.target.value;
+    const value = event.target.value;
     setNewRole(value);
   }
 

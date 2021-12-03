@@ -60,6 +60,10 @@ class OrganizationService extends DbApiService {
    public async deleteOrganizationUser(id: number,userId: number) {
         return this.delete(`/organizations/${id}/users/${userId}`);
    }
+
+   public async updateOrganizationUser(id:number, userId:number, values: Pick<OrganizationUser,"name">){
+     return this.patch(`/organizations/${id}/users/${userId}`);
+   }
 }
 
 export default new OrganizationService();
