@@ -180,7 +180,12 @@ const UsersTable = () => {
                          <Button colorScheme='blue' mr={3} onClick={onClose}>
                            Close
                          </Button>
-                      <Button colorScheme>Secondary Action</Button>
+                      <Button colorScheme='green' onClick={
+                        orgUser.roleId = newRole;
+
+                      }>
+                        Confirm
+                        </Button>
                     </ModalFooter>
                   </ModalContent>
                 </Modal>
