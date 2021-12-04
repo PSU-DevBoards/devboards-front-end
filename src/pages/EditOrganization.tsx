@@ -147,9 +147,10 @@ const EditUserModal = ({
       <ModalContent>
         <ModalHeader>Select New Role</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>Hello World!</ModalBody>
+        <ModalBody>Role: </ModalBody>
         <Select
           id="roleId"
+          data-testid="role_select"
           placeholder="Select Role"
           onChange={selectChange}
           value={selectedRole}
@@ -230,11 +231,12 @@ const UsersTable = () => {
               <Td isNumeric>{orgUser.userId}</Td>
               <Td>
                 <Flex justifyContent="flex-end">
+                  <Button onClick={() => onClickEditUser(orgUser)}>
+                    Edit
+                  </Button>
                   {orgUser.userId !== user?.id && (
                     <>
-                      <Button onClick={() => onClickEditUser(orgUser)}>
-                        Edit
-                      </Button>
+
                       <Button
                         colorScheme="red"
                         ml={3}
