@@ -198,8 +198,7 @@ const UsersTable = () => {
       removedUser.organizationId,
       removedUser.userId
     ).then(() =>
-      setOrgUsers(
-        orgUsers.filter((orgUser) => orgUser.userId !== removedUser.userId)
+      setOrgUsers(orgUsers.filter((orgUser) => orgUser.userId !== removedUser.userId)
       )
     );
   };
