@@ -44,16 +44,23 @@ const workItemToCard = (workItem: WorkItem) => ({
   id: workItem.id,
   title: workItem.name,
   description: workItem.description,
-  label: '',
+  label: workItem.estimate
+    ? `Est: ${workItem.estimate}, Priority: ${workItem.priority}`
+    : `Priority: ${workItem.priority}`,
 });
+
+const compareWorkItem = (a: WorkItem, b: WorkItem) => a.priority - b.priority;
 
 const buildBoardData = (workItems: Array<WorkItem>) => ({
   lanes: BASE_BOARD_DATA.lanes.map((lane) => ({
     ...lane,
     cards: workItems
       .filter((workItem) => workItem.status === lane.status)
+      .sort(compareWorkItem)
       .map(workItemToCard),
-    label: `${workItems.filter((workItem) => workItem.status === lane.status).length}`,
+    label: `${
+      workItems.filter((workItem) => workItem.status === lane.status).length
+    }`,
   })),
 });
 

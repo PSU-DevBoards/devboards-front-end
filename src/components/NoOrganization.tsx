@@ -19,10 +19,10 @@ const NoOrganization = () => {
     setProgress(80);
 
     OrganizationService.createOrganization(values.orgName)
-      .then((organization) => {
-        toastDescription = `We've successfully created "${organization.name}" for you.`;
+      .then(({ id, name }) => {
+        toastDescription = `We've successfully created "${name}" for you.`;
         /* Redirect */
-        history.push('/');
+        history.push(`/organizations/${id}`);
       })
       .catch(() => {
         /* Request Failed */

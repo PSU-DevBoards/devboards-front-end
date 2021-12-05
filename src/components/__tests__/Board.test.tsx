@@ -14,10 +14,20 @@ jest.mock('../../services/workitem.service', () => ({
         status: 'IN_PROGRESS',
         type: 'FEATURE',
       },
+      {
+        id: 2,
+        organizationId: 1,
+        name: 'test story',
+        priority: 1,
+        description: '',
+        status: 'IN_PROGRESS',
+        type: 'STORY',
+        parentId: 1,
+      },
     ]),
   createWorkItem: () =>
     Promise.resolve({
-      id: 2,
+      id: 3,
       organizationId: 1,
       name: 'test feature',
       priority: 1,
