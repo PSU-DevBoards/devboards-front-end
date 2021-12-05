@@ -61,7 +61,13 @@ function EditableControls() {
 
 function BoardSwimlane({ parent }: { parent: WorkItem }) {
   const [children, setChildren] = useState<Array<WorkItem>>([]);
+  const [activeWorkItem, setWorkItem] = useState({} as WorkItem);
   const toast = useToast();
+  const {
+    isOpen: isNewItemOpen,
+    onOpen: onOpenNewItem,
+    onClose: onCloseNewItem,
+  } = useDisclosure();
   const {
     isOpen: isEditItemOpen,
     onOpen: onOpenEditItem,
@@ -100,8 +106,55 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
     }
   };
 
-  const onWorkItemSaved = (workItem: WorkItem) => {
+  const onWorkItemCreated = (workItem: WorkItem) => {
     setChildren([...children, workItem]);
+  };
+
+  const onWorkItemSaved = (workItem: WorkItem) =>
+    setChildren(
+      children.map((child) => (child.id === workItem.id ? workItem : child))
+    );
+
+  const onWorkItemDeleted = (workItem: WorkItem) =>
+    setChildren(children.filter((child) => child.id !== workItem.id));
+
+  const onCardEdit = (cardId: string) => {
+    WorkitemService.getWorkItem(parent.organizationId, parseInt(cardId, 10))
+      .then((workItem: WorkItem) => {
+        setWorkItem(workItem);
+        onOpenEditItem();
+      })
+      .catch(() => {
+        const toastData: UseToastOptions = {
+          position: 'bottom-right',
+          status: 'error',
+          title: 'Work item modifications failed!',
+        };
+        toast(toastData);
+      });
+  };
+
+  const onCardDelete = (cardId: string) => {
+    const toastData: UseToastOptions = {
+      position: 'bottom-right',
+      status: 'error',
+      title: 'Work item deletion failed!',
+    };
+
+    WorkitemService.getWorkItem(parent.organizationId, parseInt(cardId, 10))
+      .then((workItem: WorkItem) => {
+        WorkitemService.deleteWorkItem(
+          parent.organizationId,
+          parseInt(cardId, 10)
+        )
+          .then(() => {
+            toastData.status = 'success';
+            toastData.title = 'Work item successfully deleted.';
+            onWorkItemDeleted(workItem);
+          })
+          .finally(() => toast(toastData));
+      })
+      .catch(() => toast(toastData));
   };
 
   const onSubmitEditable = (name: string) => {
@@ -115,11 +168,11 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
       name,
     })
       .then(() => {
-        toastData.description = `Feature name changed to: "${name}".`;
+        toastData.description = `Work item name changed to: "${name}".`;
       })
       .catch((err) => {
         toastData.status = 'error';
-        toastData.title = 'Feature modifications failed!';
+        toastData.title = 'Work item modifications failed!';
 
         if (err.errors) {
           const [errorMessages] = err.errors;
@@ -171,22 +224,34 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
           style={{ backgroundColor: 'white', height: 'auto' }}
           data={getBoardData()}
           handleDragEnd={handleCardMove}
+          onCardClick={onCardEdit}
+          onCardDelete={onCardDelete}
+          aria-label="Scrum Board"
         />
         <Flex justifyContent="flex-end">
           <Button
             variant="outline"
-            onClick={onOpenEditItem}
+            onClick={onOpenNewItem}
             rightIcon={<BiPlus />}
+            aria-label={`Add ${parent.type === 'FEATURE' ? 'Story' : 'Task'}`}
           >
             Add {parent.type === 'FEATURE' ? 'Story' : 'Task'}
           </Button>
         </Flex>
         <EditWorkItemModal
           workItemType={parent.type === 'FEATURE' ? 'STORY' : 'TASK'}
+          isOpen={isNewItemOpen}
+          onWorkItemSaved={onWorkItemCreated}
+          onClose={onCloseNewItem}
+          parentId={parent.id}
+        />
+        <EditWorkItemModal
+          workItemType={parent.type === 'FEATURE' ? 'STORY' : 'TASK'}
           isOpen={isEditItemOpen}
           onWorkItemSaved={onWorkItemSaved}
           onClose={onCloseEditItem}
           parentId={parent.id}
+          workItem={activeWorkItem}
         />
       </AccordionPanel>
     </AccordionItem>

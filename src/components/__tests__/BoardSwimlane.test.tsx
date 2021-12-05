@@ -19,11 +19,24 @@ describe('BoardSwimlane', () => {
       workItem: Partial<Pick<WorkItem, 'name' | 'status'>>
     ]
   >;
+  let getWorkItemSpy: jest.SpyInstance<
+    Promise<WorkItem>,
+    [orgId: number, itemId: number]
+  >;
   let getWorkItemsSpy: jest.SpyInstance<
     Promise<WorkItem[]>,
     [orgId: number, filter?: Partial<Pick<WorkItem, 'type' | 'parentId'>>]
   >;
+  let createWorkItemSpy: jest.SpyInstance<
+    Promise<WorkItem>,
+    [orgId: number, workItem: Pick<WorkItem, 'name'>]
+  >;
+  let deleteWorkItemSpy: jest.SpyInstance<
+    Promise<WorkItem>,
+    [orgId: number, workItemId: number]
+  >;
   let mockWorkItem: WorkItem;
+  let mockStory: WorkItem;
 
   beforeAll(() => {
     mockWorkItem = {
@@ -32,8 +45,17 @@ describe('BoardSwimlane', () => {
       name: 'test feature',
       priority: 1,
       description: '',
-      status: 'IN_PROGRESS',
+      status: 'BACKLOG',
       type: 'FEATURE',
+    };
+    mockStory = {
+      id: 2,
+      organizationId: 1,
+      name: 'test story',
+      priority: 1,
+      description: '',
+      status: 'BACKLOG',
+      type: 'STORY',
     };
   });
 
@@ -49,6 +71,18 @@ describe('BoardSwimlane', () => {
     getWorkItemsSpy = jest.spyOn(WorkitemService, 'getWorkItems');
 
     getWorkItemsSpy.mockResolvedValue([mockWorkItem]);
+
+    createWorkItemSpy = jest.spyOn(WorkitemService, 'createWorkItem');
+
+    createWorkItemSpy.mockResolvedValue(mockWorkItem);
+
+    deleteWorkItemSpy = jest.spyOn(WorkitemService, 'deleteWorkItem');
+
+    deleteWorkItemSpy.mockResolvedValue(mockWorkItem);
+
+    getWorkItemSpy = jest.spyOn(WorkitemService, 'getWorkItem');
+
+    getWorkItemSpy.mockResolvedValue(mockWorkItem);
   });
 
   test('request work items', async () => {
@@ -117,7 +151,7 @@ describe('BoardSwimlane', () => {
     );
 
     const items = await screen.findAllByText(
-      `Feature name changed to: "new feature name".`
+      `Work item name changed to: "new feature name".`
     );
     expect(items.length).toBeGreaterThan(0);
   });
@@ -143,11 +177,91 @@ describe('BoardSwimlane', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('Feature modifications failed!')
+        screen.getByText('Work item modifications failed!')
       ).toBeInTheDocument();
 
       expect(screen.getByText('ErrorMessage')).toBeInTheDocument();
     });
+  });
+
+  test('notify when work item patch request success', async () => {
+    getWorkItemsSpy.mockReset();
+    getWorkItemsSpy.mockResolvedValue([mockStory]);
+
+    render(
+      <Accordion>
+        <BoardSwimlane key={mockWorkItem.id} parent={mockWorkItem} />
+      </Accordion>
+    );
+
+    await waitFor(() => {
+      const card = screen.getByText('test story');
+      fireEvent.click(card);
+    });
+
+    await waitFor(() => {
+      const editModal = screen.getByLabelText('Edit Work Item Header');
+      expect(editModal).toBeInTheDocument();
+
+      expect(getWorkItemSpy).toBeCalledTimes(1);
+
+      const nameInput = screen.getByPlaceholderText('Name');
+      fireEvent.change(nameInput, { target: { value: 'new feature name' } });
+
+      const submit = screen.getByLabelText('Submit Edit');
+      fireEvent.click(submit);
+    });
+  });
+
+  test('delete work item card', async () => {
+    getWorkItemsSpy.mockReset();
+    getWorkItemsSpy.mockResolvedValue([mockStory]);
+
+    render(
+      <Accordion>
+        <BoardSwimlane key={mockWorkItem.id} parent={mockWorkItem} />
+      </Accordion>
+    );
+
+    await waitFor(() => {
+      const card = screen.getByText('✖');
+      fireEvent.click(card);
+    });
+
+    await waitFor(() => {
+      expect(deleteWorkItemSpy).toBeCalledTimes(1);
+    });
+
+    const messages = await screen.findAllByText(
+      'Work item successfully deleted.'
+    );
+
+    expect(messages.length).toBeGreaterThan(0);
+  });
+
+  test('notify when work item edit window fails', async () => {
+    getWorkItemsSpy.mockReset();
+    getWorkItemsSpy.mockResolvedValue([mockStory]);
+
+    render(
+      <Accordion>
+        <BoardSwimlane key={mockWorkItem.id} parent={mockWorkItem} />
+      </Accordion>
+    );
+
+    getWorkItemSpy.mockReset();
+    getWorkItemSpy.mockRejectedValueOnce({errors: ['ErrorMessage']});
+
+    await waitFor(() => {
+      const card = screen.getByText('test story');
+      fireEvent.click(card);
+    });
+
+    const messages = await screen.findAllByText(
+      'Work item modifications failed!'
+    );
+
+    expect(messages.length).toBeGreaterThan(0);
   });
 
   test('notify when work item patch request fails with no error messages', async () => {
@@ -170,7 +284,7 @@ describe('BoardSwimlane', () => {
     fireEvent.click(submit);
 
     const messages = await screen.findAllByText(
-      'Feature modifications failed!'
+      'Work item modifications failed!'
     );
     expect(messages.length).toBeGreaterThan(0);
   });

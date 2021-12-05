@@ -42,6 +42,30 @@ describe('workItemService', () => {
     );
   });
     
+  it('gets sepcific work item by id', async () => {
+    const requestHeader: HeadersInit = new Headers();
+    requestHeader.set('Content-Type', 'application/json');
+
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        headers: requestHeader,
+        json: () => Promise.resolve(workItems[0]),
+      } as any)
+    );
+    
+    const currentWorkItem =
+      await WorkItemService.getWorkItem(1, 0);
+    
+    expect(currentWorkItem).toEqual(workItems[0]);
+    expect(global.fetch).toBeCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: { Authorization: expect.any(String) },
+      })
+    );
+  });
+
   it('updates work item', async () => {
     const workItem = workItems[0];
     workItem.name = 'newWorkItemName';
@@ -56,13 +80,13 @@ describe('workItemService', () => {
       } as any)
     );
 
-    const newWorkItem = await WorkItemService.updateWorkItem(1, 1, {
+    const newWorkItem = await WorkItemService.updateWorkItem(1, 0, {
       name: workItem.name,
     });
     
     expect(newWorkItem).toEqual(workItem);
     expect(global.fetch).toBeCalledWith(
-      expect.stringContaining('/organizations/1/work-items/1'),
+      expect.stringContaining('/organizations/1/work-items/0'),
       expect.objectContaining({
         method: 'PATCH',
         headers: {
@@ -72,6 +96,31 @@ describe('workItemService', () => {
         body: JSON.stringify({
           name: workItem.name,
         }),
+      })
+    );
+  });
+
+  it('delete work item', async () => {
+    const requestHeader: HeadersInit = new Headers();
+    requestHeader.set('Content-Type', 'application/json');
+    
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        headers: requestHeader,
+        json: () => Promise.resolve({}),
+      } as any)
+    );
+
+    await WorkItemService.deleteWorkItem(1, 0);
+    
+    expect(global.fetch).toBeCalledWith(
+      expect.stringContaining('/organizations/1/work-items/0'),
+      expect.objectContaining({
+        method: 'DELETE',
+        headers: {
+          Authorization: expect.any(String),
+        }
       })
     );
   });
