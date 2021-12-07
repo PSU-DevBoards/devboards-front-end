@@ -122,6 +122,7 @@ const EditUserModal = ({
   editingUser?: OrganizationUser;
 }) => {
   const [selectedRole, setSelectedRole] = useState<string>();
+  const toast = useToast();
 
   useEffect(() => {
     if (editingUser) setSelectedRole(editingUser.roleId);
@@ -137,7 +138,21 @@ const EditUserModal = ({
         editingUser.organizationId,
         editingUser.userId,
         { roleId: selectedRole }
-      );
+      ).then(() => {
+          toast({
+            position: 'bottom-right',
+            status: 'success',
+            title: `User ${editingUser.userId} successfully updated.`,
+          });
+      })
+      .catch(() => {
+          const toastData: UseToastOptions = {
+            position: 'bottom-right',
+            status: 'error',
+            title: 'User modifications failed!',
+          };
+          toast(toastData);
+      });
     onClose();
   };
 
@@ -145,9 +160,10 @@ const EditUserModal = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select New Role</ModalHeader>
+        <ModalHeader>Modify Role</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>Role: </ModalBody>
+        <ModalBody>
+        <FormLabel>Role:</FormLabel>
         <Select
           id="roleId"
           data-testid="role_select"
@@ -161,10 +177,8 @@ const EditUserModal = ({
             </option>
           ))}
         </Select>
+        </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
-            Close
-          </Button>
           <Button colorScheme="green" onClick={onClickConfirm}>
             Confirm
           </Button>
@@ -215,7 +229,7 @@ const UsersTable = () => {
           <Tr>
             <Th>Role</Th>
             <Th isNumeric>User ID</Th>
-            <Th> Options </Th>
+            <Th textAlign='right'>Options</Th>
           </Tr>
         </Thead>
         <Tbody>
