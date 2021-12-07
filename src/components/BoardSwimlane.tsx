@@ -12,6 +12,7 @@ import {
   Flex,
   IconButton,
   Text,
+  Tooltip,
   useDisclosure,
   useEditableControls,
   useToast,
@@ -190,14 +191,16 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
         <AccordionButton as="div">
           <Box flex="1" textAlign="left">
             <Flex flexDirection="row" alignItems="baseline">
-              <Text
-                fontWeight="500"
-                fontSize="lg"
-                marginRight="5px"
-                isTruncated
-              >
-                {`${parent.type[0]}-${parent.id}`}
-              </Text>
+              <Tooltip hasArrow label={parent.description} placement='top'>
+                <Text
+                  fontWeight="500"
+                  fontSize="lg"
+                  marginRight="5px"
+                  isTruncated
+                >
+                  {`${parent.type[0]}-${parent.id}`}
+                </Text>
+              </Tooltip>
               <Editable
                 fontWeight="400"
                 fontSize="lg"
