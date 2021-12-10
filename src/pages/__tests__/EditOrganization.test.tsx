@@ -13,9 +13,11 @@ jest.mock('react-router');
 jest.mock('../../services/organization.service', () => ({
   updateOrganization: () => Promise.resolve({}),
   getOrganizationUsers: () => Promise.resolve([{ userId: 1 }]),
-  inviteUser: () =>
-    Promise.resolve({ organizationId: 1, userId: 1, roleId: 2 }),
-  deleteOrganizationUser: () => Promise.resolve({}),
+
+  inviteUser: () => Promise.resolve({ organizationId: 1, userId: 1, roleId: 2 }),
+  deleteOrganizationUser:() => Promise.resolve({}),
+  updateOrganizationUser:() => Promise.resolve({})
+
 }));
 
 jest.mock('../../contexts/user-context');
@@ -50,7 +52,14 @@ describe('EditOrganization', () => {
     any
   >;
 
-  let deleteOrganizationUserSpy: jest.SpyInstance<Promise<any>, any>;
+  let updateOrgUserSpy: jest.SpyInstance<
+  Promise<any>,
+  any
+  >;
+  let deleteOrganizationUserSpy:jest.SpyInstance<
+    Promise<any>,any
+  >;
+
 
   beforeEach(() => {
     useParamsMock.mockReturnValue({
@@ -66,10 +75,10 @@ describe('EditOrganization', () => {
 
     updateOrgSpy = jest.spyOn(OrganizationService, 'updateOrganization');
     inviteUserSpy = jest.spyOn(OrganizationService, 'inviteUser');
-    getOrganizationUsersSpy = jest.spyOn(
-      OrganizationService,
-      'getOrganizationUsers'
-    );
+
+    updateOrgUserSpy = jest.spyOn(OrganizationService, 'updateOrganizationUser');
+    getOrganizationUsersSpy = jest.spyOn(OrganizationService, 'getOrganizationUsers');
+
     getOrganizationUsersSpy.mockResolvedValue([
       { userId: 1, organizationId: 1, roleId: 1 },
     ]);
@@ -111,7 +120,25 @@ describe('EditOrganization', () => {
       expect(updateOrgSpy).toHaveBeenCalledWith(1, { name: 'newName' })
     );
   });
+  test('updates user role', async () => {
+      updateOrgUserSpy.mockResolvedValue({} as any);
+      getOrganizationUsersSpy.mockResolvedValue([
+            { userId: 2, organizationId: 1, roleId: 1 },]);
+      render(<EditOrganization />);
 
+      const button = await waitFor(() => screen.getByText('Edit'));
+      fireEvent.click(button);
+
+      const select = await waitFor(() => screen.getByTestId('role_select'));
+      fireEvent.change(select,{target: {value: 2}});
+
+      const submit = screen.getByText('Confirm');
+      fireEvent.click(submit);
+
+      await waitFor(() =>
+        expect(updateOrgUserSpy).toHaveBeenCalledWith(1, 2, { roleId: "2" })
+      );
+    });
   test('does not update the organization if no current organization', async () => {
     useOrganizationMock.mockReturnValue({ organization: undefined });
 
@@ -274,6 +301,8 @@ describe('EditOrganization', () => {
       expect(screen.getByText('Invitation Failed')).toBeVisible()
     );
   });
+
+
 
   afterEach(() => {
     updateOrgSpy.mockRestore();
