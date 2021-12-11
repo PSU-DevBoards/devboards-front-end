@@ -1,6 +1,7 @@
 import DbApiService from './dbapi.service';
 import { User } from './user.service';
 
+/* Primary objects for organization request communications */
 export type Organization = {
   id: number;
   name: string;
@@ -13,6 +14,7 @@ export type OrganizationUser = {
   roleId: string;
 };
 
+/* Organization service for sending organization-related CRUD requests to REST API */
 class OrganizationService extends DbApiService {
   public async getOrganizationById(id: number): Promise<Organization> {
     return this.get(`/organizations/${id}`);

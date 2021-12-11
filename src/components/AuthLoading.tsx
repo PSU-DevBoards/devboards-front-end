@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import Header from './Header';
 
-/* Page for transitions while Auth0 is loading */
+/* Component for transitions while Auth0 is loading */
 const AuthLoading = () => (
   <Flex
     pt={24}

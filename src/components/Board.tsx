@@ -34,6 +34,7 @@ function Board() {
     }
   }, [organization, parentView]);
 
+  /* Update state variable when work item saved to reflect changes on board */
   const onWorkItemSaved = (workItem: WorkItem) => {
     setWorkItems([...workItems, workItem]);
   };

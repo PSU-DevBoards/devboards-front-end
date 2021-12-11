@@ -20,6 +20,7 @@ const Landing = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      /* When authenicated, request Auth0 token and store in local storage */
       getAccessTokenSilently({
         audience: config.AUTH0_API_AUDIENCE,
         scope: 'read:current_user',

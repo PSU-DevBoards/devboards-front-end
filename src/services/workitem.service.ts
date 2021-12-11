@@ -25,6 +25,7 @@ export type WorkItem = {
   parentId?: number;
 };
 
+/* Work item service for sending work-item related CRUD requests to API */
 class WorkItemService extends DbApiService {
   public async getWorkItem(orgId: number, itemId: number): Promise<WorkItem> {
     return this.get(`/organizations/${orgId}/work-items/${itemId}`);

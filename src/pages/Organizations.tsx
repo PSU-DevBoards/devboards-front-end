@@ -40,6 +40,7 @@ import OrganizationService, {
   Organization,
 } from '../services/organization.service';
 
+/* Modal popout component for organization creation */
 const NewOrganizationModel = ({
   isOpen,
   onClose,
@@ -98,6 +99,9 @@ const NewOrganizationModel = ({
   );
 };
 
+/**
+  * Organization component for organization management
+*/
 function Organizations() {
   const [organizations, setOrganizations] = useState<Array<Organization>>([]);
   const user = useUser();
