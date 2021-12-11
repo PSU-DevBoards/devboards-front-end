@@ -17,6 +17,7 @@ import BoardSwimlane from './BoardSwimlane';
 import EditWorkItemModal from './EditWorkItemModal';
 
 function Board() {
+  /* Provide board with context of the user's organization */
   const { organization } = useOrganization();
   const [parentView, setParentView] = useState<'FEATURE' | 'STORY'>('FEATURE');
   const [workItems, setWorkItems] = useState<Array<WorkItem>>([]);
@@ -34,6 +35,7 @@ function Board() {
     }
   }, [organization, parentView]);
 
+  /* Update state variable when work item saved to reflect changes on board */
   const onWorkItemSaved = (workItem: WorkItem) => {
     setWorkItems([...workItems, workItem]);
   };
@@ -41,6 +43,7 @@ function Board() {
   return (
     <Container maxW="">
       <BoardMenu parentView={parentView} onSelectView={setParentView} />
+      { /* Create swimplanes for each work item type */ }
       <Accordion defaultIndex={[0]} allowMultiple>
         {workItems.map((workItem) => (
           <BoardSwimlane key={workItem.id} parent={workItem} />

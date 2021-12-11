@@ -1,6 +1,7 @@
 import { Button, HStack } from '@chakra-ui/react';
 import React from 'react';
 
+/* Top menu for switching between task and story views */
 function BoardMenu({
   parentView,
   onSelectView,

@@ -28,6 +28,7 @@ import WorkitemService, {
 } from '../services/workitem.service';
 import EditWorkItemModal from './EditWorkItemModal';
 
+/* Controls for modifying work item name in accordion header */
 function EditableControls() {
   const {
     isEditing,
@@ -90,12 +91,15 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
     fromLaneId: string,
     toLaneId: string
   ) => {
+    /* Only send request if card moved to separate lane */
     if (fromLaneId !== toLaneId) {
       const itemId = parseInt(cardId, 10);
 
+      /* Send PATCH request to backend */
       WorkitemService.updateWorkItem(parent.organizationId, itemId, {
         status: toLaneId as WorkItemStatus,
       }).then(() => {
+        /* Update cards to reflect changes when request successful */
         setChildren(
           children.map((item) =>
             item.id === itemId
@@ -107,25 +111,30 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
     }
   };
 
+  /* Update board state when work item created */
   const onWorkItemCreated = (workItem: WorkItem) => {
     setChildren([...children, workItem]);
   };
 
+  /* Update board state when work item saved */
   const onWorkItemSaved = (workItem: WorkItem) =>
     setChildren(
       children.map((child) => (child.id === workItem.id ? workItem : child))
     );
 
+  /* Update board state when work item deleted */
   const onWorkItemDeleted = (workItem: WorkItem) =>
     setChildren(children.filter((child) => child.id !== workItem.id));
 
   const onCardEdit = (cardId: string) => {
+    /* Get work item data to prefill editing modal window */
     WorkitemService.getWorkItem(parent.organizationId, parseInt(cardId, 10))
       .then((workItem: WorkItem) => {
         setWorkItem(workItem);
         onOpenEditItem();
       })
       .catch(() => {
+        /* Provide error on failure */
         const toastData: UseToastOptions = {
           position: 'bottom-right',
           status: 'error',
@@ -135,6 +144,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
       });
   };
 
+  /* Handle deletion of cards after pressing 'x' button */
   const onCardDelete = (cardId: string) => {
     const toastData: UseToastOptions = {
       position: 'bottom-right',
@@ -158,6 +168,7 @@ function BoardSwimlane({ parent }: { parent: WorkItem }) {
       .catch(() => toast(toastData));
   };
 
+  /* Handle submission of edited work item */
   const onSubmitEditable = (name: string) => {
     const toastData: UseToastOptions = {
       position: 'bottom-right',
