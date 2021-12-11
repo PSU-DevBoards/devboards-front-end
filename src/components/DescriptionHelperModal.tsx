@@ -15,6 +15,7 @@ import {
 import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react';
 
+/* Form handling for Given-When-The description helper */
 const GWTForm = ({ onSubmit }: { onSubmit: (text: string) => void }) => {
   const { handleSubmit, handleChange, values, submitForm } = useFormik({
     initialValues: {
@@ -71,6 +72,7 @@ const GWTForm = ({ onSubmit }: { onSubmit: (text: string) => void }) => {
   );
 };
 
+/* Form handling for Role-Feature-Benefit description helper */
 const RFBForm = ({ onSubmit }: { onSubmit: (text: string) => void }) => {
   const { handleSubmit, handleChange, values, submitForm } = useFormik({
     initialValues: {

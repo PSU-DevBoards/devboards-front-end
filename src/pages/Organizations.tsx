@@ -99,9 +99,7 @@ const NewOrganizationModel = ({
   );
 };
 
-/**
-  * Organization component for organization management
-*/
+/* Organization component for organization management */
 function Organizations() {
   const [organizations, setOrganizations] = useState<Array<Organization>>([]);
   const user = useUser();
