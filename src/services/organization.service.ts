@@ -99,15 +99,24 @@ class OrganizationService extends DbApiService {
   > {
     return this.get(`/users/me/organizations/joined`);
   }
-
+  
   /**
    * Deletes a user from an organization.
    * @param ID Organization ID.
    * @param UserID User's unique ID.
    */
-   public async deleteOrganizationUser(id: number,userId: number) {
-        return this.delete(`/organizations/${id}/users/${userId}`);
-   }
+
+  public async deleteOrganizationUser(id: number, userId: number) {
+    return this.delete(`/organizations/${id}/users/${userId}`);
+  }
+
+  public async updateOrganizationUser(
+    id: number,
+    userId: number,
+    values: Pick<OrganizationUser, 'roleId'>
+  ) {
+    return this.patch(`/organizations/${id}/users/${userId}`, values);
+  }
 }
 
 export default new OrganizationService();

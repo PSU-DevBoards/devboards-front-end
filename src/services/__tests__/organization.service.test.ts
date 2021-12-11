@@ -235,4 +235,43 @@ describe('organizationService', () => {
   afterEach(() => {
     (global.fetch as jest.Mock).mockRestore();
   });
+
+  it('updates a user by id', async () => {
+      const name = 'Scrum Master';
+      const organizationUser = {
+        organizationId: 1,
+        userId: 1,
+        roleId: name
+      };
+      const requestHeader: HeadersInit = new Headers();
+      requestHeader.set('Content-Type', 'application/json');
+
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          ok: true,
+          headers: requestHeader,
+          json: () => Promise.resolve(organizationUser),
+        } as any)
+      );
+
+      const newOrganizationUser = await organizationService.updateOrganizationUser(1,1,
+        name,
+      );
+
+      expect(newOrganizationUser).toEqual(organizationUser);
+      expect(global.fetch).toBeCalledWith(
+        expect.stringContaining('/organizations/1/users/1'),
+        expect.objectContaining({
+          method: 'PATCH',
+          headers: {
+            Authorization: expect.any(String),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(
+            name,
+          ),
+        })
+      );
+    });
+
 });

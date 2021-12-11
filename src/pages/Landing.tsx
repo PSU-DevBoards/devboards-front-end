@@ -11,7 +11,7 @@ import { setAccessToken } from '../helpers/auth.helper';
 import LandingIllustration from '../images/scrum_landing.svg';
 
 const description =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+  'DevBoards is built by developers, for developers. A simple, elegant, and easy-to-use scrum board framework designed to make collaborative software engineering easier. DevBoards enables agile development teams to keep track of their project features, stories, and individual tasks in real time.';
 
 const Landing = () => {
   /* Check Auth0 status, if authenticated move away from landing page */
@@ -48,6 +48,7 @@ const Landing = () => {
       <Header />
       {/* Align description and login/welcome container in grid to ensure responsiveness */}
       <Flex
+        pt={10}
         flexDir={{ base: 'column', lg: 'row' }}
         alignItems="center"
         height="full"
@@ -58,6 +59,7 @@ const Landing = () => {
             {description}
           </Text>
           <Image
+            pt={5}
             src={LandingIllustration}
             boxSize={{ base: '100%', lg: '50%' }}
           />
