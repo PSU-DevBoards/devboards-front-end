@@ -20,7 +20,7 @@ class OrganizationService extends DbApiService {
   /**
    * Gets organization given organzation identifier.
    * @param ID Organization ID.
-   * @returns The organzation object.
+   * @returns The requested organzation object.
    */
   public async getOrganizationById(id: number): Promise<Organization> {
     return this.get(`/organizations/${id}`);
